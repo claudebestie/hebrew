@@ -1,0 +1,2211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>עברית — Programme Intensif</title>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+Hebrew:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0D0D0D;
+  --paper: #F2EDE4;
+  --paper2: #EAE4D8;
+  --line: #D9D2C5;
+  --accent: #1A3A5C;
+  --accent2: #B5492A;
+  --gold: #C9922A;
+  --green: #2A6B4A;
+  --muted: #7A7268;
+  --white: #FDFAF5;
+  --heb: #1A3A5C;
+  --correct: #2A6B4A;
+  --wrong: #B5492A;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Spectral', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* ---- LOADING SCREEN ---- */
+#loader {
+  position: fixed; inset: 0;
+  background: var(--ink);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.6s;
+}
+
+#loader .heb-logo {
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  font-size: 5rem; font-weight: 700;
+  color: var(--paper);
+  letter-spacing: -0.02em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+#loader p { color: var(--muted); font-style: italic; margin-top: 12px; font-size: 1rem; }
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+/* ---- MAIN LAYOUT ---- */
+#app { display: none; }
+
+.top-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: var(--ink);
+  padding: 0 32px;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #222;
+}
+
+.logo {
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  font-size: 1.3rem; font-weight: 700;
+  color: var(--paper);
+  letter-spacing: 0.02em;
+}
+.logo span { color: var(--gold); }
+
+.top-nav { display: flex; gap: 4px; align-items: center; }
+
+.nav-btn {
+  padding: 6px 14px;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: 'Spectral', serif;
+  font-size: 0.82rem;
+  color: #888;
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+.nav-btn:hover { color: var(--paper); background: rgba(255,255,255,0.08); }
+.nav-btn.active { color: var(--paper); background: rgba(255,255,255,0.12); }
+
+.session-indicator {
+  display: flex; align-items: center; gap: 10px;
+}
+
+.day-dots { display: flex; gap: 5px; }
+.day-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #333;
+  transition: all 0.3s;
+}
+.day-dot.done { background: var(--gold); }
+.day-dot.today { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+
+.timer-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88rem;
+  color: #888;
+  background: #161616;
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #2a2a2a;
+  min-width: 56px;
+  text-align: center;
+}
+.timer-pill.running { color: var(--gold); border-color: #3a3a2a; }
+
+/* ---- VIEWS ---- */
+.view { display: none; padding-top: 52px; min-height: 100vh; }
+.view.active { display: block; }
+
+/* ---- HOME / DASHBOARD ---- */
+#v-home {
+  max-width: 900px; margin: 0 auto;
+  padding: 60px 40px;
+}
+
+.home-greeting {
+  font-size: 2.8rem; font-weight: 300; font-style: italic;
+  line-height: 1.2; margin-bottom: 8px;
+  color: var(--ink);
+}
+.home-greeting strong { font-weight: 700; font-style: normal; color: var(--accent); }
+
+.home-sub { color: var(--muted); font-size: 1rem; margin-bottom: 48px; }
+
+.week-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px;
+  margin-bottom: 48px;
+}
+
+.day-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.day-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--line);
+  transition: background 0.25s;
+}
+
+.day-card.done::before { background: var(--gold); }
+.day-card.today::before { background: var(--accent2); }
+.day-card.locked { opacity: 0.4; cursor: not-allowed; }
+
+.day-card:hover:not(.locked) { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+
+.dc-day { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted); margin-bottom: 8px; font-family: 'IBM Plex Mono', monospace; }
+.dc-title { font-size: 1rem; font-weight: 600; margin-bottom: 6px; }
+.dc-focus { font-size: 0.78rem; color: var(--muted); font-style: italic; }
+.dc-score { margin-top: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 0.85rem; }
+.dc-score.good { color: var(--correct); }
+.dc-score.avg { color: var(--gold); }
+.dc-score.none { color: var(--line); }
+
+.dc-badge {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 1rem;
+}
+
+.stats-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px;
+  margin-bottom: 48px;
+}
+
+.stat-block {
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 8px;
+  padding: 24px 20px;
+}
+.sb-num {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 2.2rem; font-weight: 400;
+  line-height: 1; margin-bottom: 4px;
+  color: var(--gold);
+}
+.sb-label { font-size: 0.78rem; color: #888; text-transform: uppercase; letter-spacing: 0.1em; }
+
+.start-btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: var(--accent2);
+  color: white;
+  border: none;
+  padding: 16px 36px;
+  font-family: 'Spectral', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.25s;
+  letter-spacing: 0.02em;
+}
+.start-btn:hover { background: #9a3b22; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(181,73,42,0.35); }
+
+.start-btn .arrow { font-size: 1.3rem; }
+
+/* ---- SESSION VIEW ---- */
+#v-session {
+  display: none;
+  min-height: 100vh;
+}
+#v-session.active { display: block; }
+
+.session-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: calc(100vh - 52px);
+}
+
+/* SIDEBAR */
+.session-sidebar {
+  background: #111;
+  padding: 32px 0;
+  border-right: 1px solid #222;
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+}
+
+.sidebar-day-title {
+  padding: 0 20px 24px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #555;
+}
+
+.sidebar-section-title {
+  padding: 20px 20px 8px;
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: #444;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.exercise-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: #666;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+  border-left: 2px solid transparent;
+  position: relative;
+}
+.exercise-item:hover { color: #aaa; background: rgba(255,255,255,0.03); }
+.exercise-item.active { color: var(--paper); border-left-color: var(--accent2); background: rgba(255,255,255,0.05); }
+.exercise-item.completed { color: var(--gold); }
+.exercise-item .ei-icon { font-size: 0.85rem; width: 18px; text-align: center; }
+.exercise-item .ei-time { margin-left: auto; font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: #444; }
+.exercise-item.completed .ei-time { color: var(--gold); }
+
+.session-progress {
+  padding: 20px;
+  margin-top: auto;
+}
+
+.prog-label {
+  display: flex; justify-content: space-between;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem; color: #555; margin-bottom: 6px;
+}
+.prog-bar { height: 3px; background: #222; border-radius: 2px; }
+.prog-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.5s; }
+
+/* EXERCISE AREA */
+.exercise-area {
+  padding: 48px 60px;
+  background: var(--paper);
+}
+
+.ex-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.ex-tag {
+  display: inline-block;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 5px 12px;
+  border-radius: 3px;
+  margin-bottom: 14px;
+}
+
+.ex-title {
+  font-size: 2rem; font-weight: 600; line-height: 1.2;
+  color: var(--ink);
+}
+
+.ex-subtitle {
+  color: var(--muted); font-style: italic;
+  margin-top: 6px; font-size: 0.95rem;
+}
+
+.ex-timer {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem; color: var(--muted);
+  text-align: right;
+}
+
+/* ---- EXERCISE COMPONENTS ---- */
+
+/* Vocab flash */
+.vocab-flash-deck {
+  max-width: 640px; margin: 0 auto;
+}
+
+.flash-card {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 48px;
+  text-align: center;
+  margin-bottom: 24px;
+  min-height: 220px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.flash-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+
+.flash-heb {
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  font-size: 3.5rem; font-weight: 400;
+  color: var(--heb);
+  direction: rtl;
+  line-height: 1.3;
+  margin-bottom: 16px;
+}
+
+.flash-reveal {
+  font-size: 1.3rem; font-weight: 600;
+  color: var(--ink); margin-bottom: 6px;
+}
+.flash-phon {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88rem; color: var(--muted);
+  margin-bottom: 8px;
+}
+.flash-example {
+  font-size: 0.88rem; color: var(--muted);
+  font-style: italic; max-width: 380px;
+}
+
+.flash-hint { font-size: 0.82rem; color: var(--muted); font-style: italic; margin-top: 12px; }
+
+.flash-actions {
+  display: flex; gap: 12px; justify-content: center;
+}
+
+.fa-btn {
+  padding: 10px 28px;
+  border-radius: 6px;
+  border: 2px solid;
+  font-family: 'Spectral', serif;
+  font-size: 0.95rem; font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fa-knew { border-color: var(--correct); color: var(--correct); background: transparent; }
+.fa-knew:hover { background: var(--correct); color: white; }
+.fa-unknown { border-color: var(--wrong); color: var(--wrong); background: transparent; }
+.fa-unknown:hover { background: var(--wrong); color: white; }
+.fa-skip { border-color: var(--line); color: var(--muted); background: transparent; }
+.fa-skip:hover { border-color: var(--muted); }
+
+.flash-progress {
+  text-align: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.8rem; color: var(--muted);
+  margin-bottom: 24px;
+}
+
+/* Translation exercise */
+.translation-block {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 32px;
+  margin-bottom: 20px;
+}
+
+.source-text {
+  font-size: 1.2rem; line-height: 1.8;
+  margin-bottom: 20px;
+  color: var(--ink);
+}
+
+.source-text.rtl {
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  direction: rtl; text-align: right;
+  font-size: 1.4rem;
+  color: var(--heb);
+  line-height: 2;
+}
+
+.translation-input {
+  width: 100%;
+  min-height: 100px;
+  padding: 16px 18px;
+  border: 2px solid var(--line);
+  border-radius: 8px;
+  font-family: 'Spectral', serif;
+  font-size: 1rem;
+  background: var(--paper);
+  color: var(--ink);
+  resize: vertical;
+  transition: border-color 0.2s;
+  outline: none;
+  line-height: 1.7;
+}
+.translation-input.heb-input {
+  direction: rtl;
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  font-size: 1.1rem;
+}
+.translation-input:focus { border-color: var(--accent); }
+.translation-input.correct { border-color: var(--correct); background: rgba(42,107,74,0.05); }
+.translation-input.wrong { border-color: var(--wrong); }
+
+.correction-box {
+  background: var(--paper2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 12px;
+  display: none;
+}
+.correction-box.show { display: block; }
+.corr-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 8px; }
+.corr-text { font-size: 0.95rem; line-height: 1.6; }
+.corr-note { font-size: 0.82rem; color: var(--muted); font-style: italic; margin-top: 8px; }
+
+/* Grammar conjugation exercise */
+.conj-table-ex {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 24px;
+  font-size: 0.92rem;
+}
+.conj-table-ex th {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 16px;
+  text-align: left;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+}
+.conj-table-ex td { padding: 10px 16px; border-bottom: 1px solid var(--line); }
+.conj-table-ex tr:last-child td { border-bottom: none; }
+.conj-table-ex .td-heb {
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  direction: rtl; text-align: right;
+  font-size: 1.2rem; color: var(--heb);
+  font-weight: 600;
+}
+.conj-table-ex tr:hover td { background: rgba(0,0,0,0.02); }
+
+/* Fill in blanks */
+.sentence-fill {
+  font-size: 1.15rem; line-height: 2.4;
+  margin-bottom: 16px;
+}
+.fill-blank {
+  display: inline-block;
+  border-bottom: 2px solid var(--accent);
+  min-width: 80px;
+  text-align: center;
+  padding: 0 4px;
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  font-size: 1.1rem;
+  color: var(--heb);
+  direction: rtl;
+}
+
+input.fill-blank-input {
+  border: none; border-bottom: 2px solid var(--accent);
+  background: transparent;
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  font-size: 1.1rem;
+  color: var(--heb);
+  direction: rtl;
+  text-align: center;
+  min-width: 80px;
+  outline: none;
+  padding: 0 4px;
+  transition: border-color 0.2s;
+}
+input.fill-blank-input:focus { border-color: var(--gold); }
+input.fill-blank-input.correct { border-color: var(--correct); color: var(--correct); }
+input.fill-blank-input.wrong { border-color: var(--wrong); color: var(--wrong); }
+
+/* Reading text */
+.reading-text {
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  direction: rtl;
+  text-align: right;
+  font-size: 1.15rem;
+  line-height: 2.2;
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 32px 36px;
+  margin-bottom: 24px;
+}
+
+.reading-text .word {
+  cursor: pointer;
+  border-radius: 2px;
+  transition: background 0.15s;
+  display: inline;
+  padding: 0 1px;
+}
+.reading-text .word:hover { background: rgba(26,58,92,0.12); }
+
+.word-tooltip {
+  position: fixed;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-family: 'Spectral', serif;
+  pointer-events: none;
+  z-index: 1000;
+  display: none;
+  max-width: 220px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+}
+
+/* Buttons */
+.action-row {
+  display: flex; gap: 12px;
+  margin-top: 20px;
+  align-items: center;
+}
+
+.btn {
+  padding: 11px 24px;
+  border-radius: 6px;
+  font-family: 'Spectral', serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+}
+
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: var(--accent); }
+.btn-secondary { background: var(--paper2); color: var(--ink); border: 1px solid var(--line); }
+.btn-secondary:hover { background: var(--line); }
+.btn-reveal { background: var(--accent); color: white; }
+.btn-reveal:hover { background: #0f2440; }
+.btn-check { background: var(--accent2); color: white; }
+.btn-check:hover { background: #9a3b22; }
+.btn-next { background: var(--gold); color: white; }
+.btn-next:hover { background: #a87520; }
+
+/* Score badge */
+.score-badge {
+  margin-left: auto;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.82rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: var(--paper2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.score-badge.good { background: rgba(42,107,74,0.12); border-color: rgba(42,107,74,0.3); color: var(--correct); }
+
+/* Audio button */
+.audio-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: none; border: 1px solid var(--line);
+  border-radius: 20px; padding: 5px 14px;
+  font-family: 'Spectral', serif;
+  font-size: 0.8rem; color: var(--muted);
+  cursor: pointer; transition: all 0.2s;
+}
+.audio-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* Notes box */
+.notes-box {
+  background: #FFF8E7;
+  border-left: 4px solid var(--gold);
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 0.88rem;
+  border-radius: 0 6px 6px 0;
+}
+.notes-box .note-title { font-weight: 700; margin-bottom: 6px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gold); }
+
+/* Error box */
+.error-box {
+  background: rgba(181,73,42,0.07);
+  border-left: 4px solid var(--accent2);
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-size: 0.88rem;
+  border-radius: 0 6px 6px 0;
+}
+
+/* Completion screen */
+.completion-screen {
+  max-width: 640px; margin: 0 auto;
+  text-align: center;
+  padding: 60px 40px;
+}
+
+.completion-score {
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: var(--ink);
+  margin: 0 auto 32px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: var(--gold);
+  font-family: 'IBM Plex Mono', monospace;
+  box-shadow: 0 0 0 8px rgba(201,146,42,0.12);
+}
+
+.cs-num { font-size: 2.8rem; font-weight: 400; line-height: 1; }
+.cs-max { font-size: 0.78rem; color: #888; }
+
+.cs-title { font-size: 1.8rem; font-weight: 600; margin-bottom: 8px; }
+.cs-sub { color: var(--muted); font-style: italic; margin-bottom: 40px; }
+
+.session-breakdown {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+  margin-bottom: 32px; text-align: left;
+}
+.sb-item {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+}
+.sbi-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 6px; }
+.sbi-val { font-size: 1.4rem; font-weight: 600; color: var(--ink); font-family: 'IBM Plex Mono', monospace; }
+.sbi-val.good { color: var(--correct); }
+.sbi-val.avg { color: var(--gold); }
+
+.error-review {
+  text-align: left;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 24px;
+}
+.er-title { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 16px; }
+.er-item { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; font-size: 0.9rem; }
+.er-wrong { color: var(--wrong); font-family: 'Noto Sans Hebrew', sans-serif; direction: rtl; font-size: 1rem; }
+.er-correct { color: var(--correct); font-family: 'Noto Sans Hebrew', sans-serif; direction: rtl; font-size: 1rem; }
+
+/* Weekly stats */
+#v-stats {
+  max-width: 860px; margin: 0 auto;
+  padding: 60px 40px;
+}
+
+.stats-header {
+  margin-bottom: 48px;
+}
+
+.stats-title { font-size: 2.2rem; font-weight: 600; margin-bottom: 6px; }
+.stats-week { font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; color: var(--muted); }
+
+.chart-block {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 32px;
+  margin-bottom: 24px;
+}
+
+.chart-title { font-size: 1rem; font-weight: 600; margin-bottom: 24px; }
+
+.bar-chart { display: flex; align-items: flex-end; gap: 12px; height: 140px; }
+
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.bar-fill { width: 100%; border-radius: 4px 4px 0 0; transition: height 0.8s cubic-bezier(0.25,0.46,0.45,0.94); }
+.bar-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--muted); }
+.bar-val { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--ink); }
+
+.perf-grid {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px;
+  margin-bottom: 24px;
+}
+
+.perf-item {
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px 14px;
+  text-align: center;
+}
+
+.pi-skill { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-family: 'IBM Plex Mono', monospace; margin-bottom: 10px; }
+.pi-score { font-size: 1.6rem; font-weight: 700; font-family: 'IBM Plex Mono', monospace; }
+.pi-score.good { color: var(--correct); }
+.pi-score.mid { color: var(--gold); }
+.pi-score.bad { color: var(--wrong); }
+.pi-bar { height: 4px; background: var(--line); border-radius: 2px; margin-top: 8px; }
+.pi-bar-fill { height: 100%; border-radius: 2px; }
+
+.words-cloud {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.word-chip {
+  background: var(--paper2);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  direction: rtl;
+  font-size: 0.95rem;
+  color: var(--heb);
+}
+.word-chip.struggling { background: rgba(181,73,42,0.1); border-color: rgba(181,73,42,0.3); color: var(--wrong); }
+
+/* tooltip */
+#word-tooltip {
+  position: fixed;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  pointer-events: none;
+  z-index: 9999;
+  display: none;
+  max-width: 220px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  font-family: 'Spectral', serif;
+  line-height: 1.5;
+}
+
+/* MISC */
+.divider { height: 1px; background: var(--line); margin: 32px 0; }
+.section-divider { height: 1px; background: var(--line); margin: 28px 0; }
+
+.heb-inline {
+  font-family: 'Noto Sans Hebrew', sans-serif;
+  direction: rtl;
+  color: var(--heb);
+  font-weight: 600;
+}
+
+.reveal-content { display: none; }
+.reveal-content.visible { display: block; animation: fadeIn 0.3s; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.exercise-done-overlay {
+  text-align: center;
+  padding: 48px;
+  background: var(--white);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  display: none;
+}
+.exercise-done-overlay.show { display: block; }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line); border-radius: 3px; }
+
+/* responsive */
+@media (max-width: 768px) {
+  .session-layout { grid-template-columns: 1fr; }
+  .session-sidebar { display: none; }
+  .exercise-area { padding: 24px 20px; }
+  .week-grid { grid-template-columns: repeat(3, 1fr); }
+  .stats-strip { grid-template-columns: repeat(2, 1fr); }
+  .perf-grid { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="heb-logo">עברית</div>
+  <p>Programme intensif — A2+/B1</p>
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="logo">עב<span>ר</span>ית</div>
+  <div class="top-nav">
+    <button class="nav-btn active" onclick="showView('home')" id="nb-home">Programme</button>
+    <button class="nav-btn" onclick="showView('session')" id="nb-session">Session</button>
+    <button class="nav-btn" onclick="showView('stats')" id="nb-stats">Statistiques</button>
+  </div>
+  <div class="session-indicator">
+    <div class="day-dots" id="dayDots"></div>
+    <div class="timer-pill" id="globalTimer">—</div>
+  </div>
+</div>
+
+<!-- HOME VIEW -->
+<div class="view active" id="v-home">
+  <div style="max-width:900px; margin:0 auto; padding:60px 40px;">
+
+    <div class="home-greeting">
+      Bonjour,<br><strong>semaine d'hébreu</strong>.
+    </div>
+    <p class="home-sub" id="weekSubtitle">Programme 5 jours · 1h par session · Niveau A2+/B1</p>
+
+    <div class="week-grid" id="weekGrid"></div>
+
+    <div class="stats-strip" id="statsStrip">
+      <div class="stat-block">
+        <div class="sb-num" id="st-sessions">0</div>
+        <div class="sb-label">Sessions complétées</div>
+      </div>
+      <div class="stat-block">
+        <div class="sb-num" id="st-words">0</div>
+        <div class="sb-label">Mots révisés</div>
+      </div>
+      <div class="stat-block">
+        <div class="sb-num" id="st-score">—</div>
+        <div class="sb-label">Score moyen</div>
+      </div>
+      <div class="stat-block">
+        <div class="sb-num" id="st-streak">0</div>
+        <div class="sb-label">Jours consécutifs</div>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startTodaySession()" id="mainStartBtn">
+      <span>Commencer la session du jour</span>
+      <span class="arrow">→</span>
+    </button>
+  </div>
+</div>
+
+<!-- SESSION VIEW -->
+<div class="view" id="v-session">
+  <div class="session-layout">
+    <div class="session-sidebar">
+      <div class="sidebar-day-title" id="sidebarDayTitle">Jour 1 — Lundi</div>
+      <div id="exerciseList"></div>
+      <div class="session-progress" style="position:absolute; bottom:0; left:0; right:0; padding:20px; background:#111; border-top:1px solid #222;">
+        <div class="prog-label">
+          <span id="progText">0 / 6</span>
+          <span id="progPct">0%</span>
+        </div>
+        <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="exercise-area" id="exerciseArea">
+      <!-- content loaded dynamically -->
+    </div>
+  </div>
+</div>
+
+<!-- STATS VIEW -->
+<div class="view" id="v-stats">
+  <div style="max-width:860px; margin:0 auto; padding:60px 40px;">
+    <div class="stats-header">
+      <div class="stats-title">Bilan de la semaine</div>
+      <div class="stats-week" id="statsWeekLabel">—</div>
+    </div>
+
+    <div class="chart-block">
+      <div class="chart-title">Scores par session</div>
+      <div class="bar-chart" id="scoreChart"></div>
+    </div>
+
+    <div class="chart-block">
+      <div class="chart-title">Performance par compétence</div>
+      <div class="perf-grid" id="skillGrid"></div>
+    </div>
+
+    <div class="chart-block">
+      <div class="chart-title">Mots maîtrisés cette semaine</div>
+      <div class="words-cloud" id="wordsCloud"></div>
+    </div>
+
+    <div class="chart-block">
+      <div class="chart-title">Mots à retravailler</div>
+      <div class="words-cloud" id="strugglingCloud"></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /app -->
+
+<!-- WORD TOOLTIP -->
+<div id="word-tooltip"></div>
+
+<script>
+// ============================================================
+// CURRICULUM DATA
+// ============================================================
+const DAYS = [
+  {
+    id: 0,
+    title: "Temps, négation, questions",
+    focus: "Grammaire fondamentale",
+    color: "#1A3A5C",
+    exercises: [
+      { id: "vocab1", type: "flashcards", label: "Vocabulaire — Temps", icon: "🃏", duration: "12 min" },
+      { id: "conj1", type: "conjugation", label: "Conjugaison — Passé Binyan Pa'al", icon: "📋", duration: "10 min" },
+      { id: "fill1", type: "fillblanks", label: "Remplis les blancs", icon: "✏️", duration: "10 min" },
+      { id: "read1", type: "reading", label: "Lecture — Texte court", icon: "📖", duration: "12 min" },
+      { id: "trans1", type: "translation", label: "Traduction FR→HEB", icon: "🔄", duration: "10 min" },
+      { id: "done1", type: "summary", label: "Récapitulatif", icon: "✅", duration: "" }
+    ]
+  },
+  {
+    id: 1,
+    title: "Commerce & Négociation",
+    focus: "Vocabulaire professionnel",
+    color: "#B5492A",
+    exercises: [
+      { id: "vocab2", type: "flashcards", label: "Vocabulaire — Business", icon: "🃏", duration: "12 min" },
+      { id: "conj2", type: "conjugation", label: "Conjugaison — Présent Binyan Pi'el", icon: "📋", duration: "10 min" },
+      { id: "fill2", type: "fillblanks", label: "Phrases professionnelles", icon: "✏️", duration: "10 min" },
+      { id: "read2", type: "reading", label: "Dialogue commercial", icon: "📖", duration: "12 min" },
+      { id: "trans2", type: "translation", label: "Traduction HEB→FR", icon: "🔄", duration: "10 min" },
+      { id: "done2", type: "summary", label: "Récapitulatif", icon: "✅", duration: "" }
+    ]
+  },
+  {
+    id: 2,
+    title: "Futur & Conditionnel",
+    focus: "Exprimer projets et désirs",
+    color: "#2A6B4A",
+    exercises: [
+      { id: "vocab3", type: "flashcards", label: "Vocabulaire — Projets & Plans", icon: "🃏", duration: "12 min" },
+      { id: "conj3", type: "conjugation", label: "Conjugaison — Futur Pa'al", icon: "📋", duration: "10 min" },
+      { id: "fill3", type: "fillblanks", label: "Situations futures", icon: "✏️", duration: "10 min" },
+      { id: "read3", type: "reading", label: "Lecture — Email professionnel", icon: "📖", duration: "12 min" },
+      { id: "trans3", type: "translation", label: "Traduction intensive", icon: "🔄", duration: "10 min" },
+      { id: "done3", type: "summary", label: "Récapitulatif", icon: "✅", duration: "" }
+    ]
+  },
+  {
+    id: 3,
+    title: "Vie quotidienne Tel Aviv",
+    focus: "Situations concrètes",
+    color: "#7A4A8C",
+    exercises: [
+      { id: "vocab4", type: "flashcards", label: "Vocabulaire — Quotidien", icon: "🃏", duration: "12 min" },
+      { id: "conj4", type: "conjugation", label: "Conjugaison — Hif'il", icon: "📋", duration: "10 min" },
+      { id: "fill4", type: "fillblanks", label: "Dialogues urbains", icon: "✏️", duration: "10 min" },
+      { id: "read4", type: "reading", label: "Lecture — Article simple", icon: "📖", duration: "12 min" },
+      { id: "trans4", type: "translation", label: "Traduction contexte", icon: "🔄", duration: "10 min" },
+      { id: "done4", type: "summary", label: "Récapitulatif", icon: "✅", duration: "" }
+    ]
+  },
+  {
+    id: 4,
+    title: "Révision & Consolidation",
+    focus: "Renforcement semaine",
+    color: "#C9922A",
+    exercises: [
+      { id: "vocab5", type: "flashcards", label: "Révision vocabulaire", icon: "🃏", duration: "12 min" },
+      { id: "conj5", type: "conjugation", label: "Quiz conjugaison mixte", icon: "📋", duration: "10 min" },
+      { id: "fill5", type: "fillblanks", label: "Erreurs fréquentes", icon: "✏️", duration: "10 min" },
+      { id: "read5", type: "reading", label: "Texte long — compréhension", icon: "📖", duration: "12 min" },
+      { id: "trans5", type: "translation", label: "Traduction mixte", icon: "🔄", duration: "10 min" },
+      { id: "done5", type: "summary", label: "Bilan semaine", icon: "🏆", duration: "" }
+    ]
+  }
+];
+
+// ============================================================
+// EXERCISE CONTENT LIBRARY
+// ============================================================
+const VOCAB = {
+  day0: [
+    { heb: "מחר", phon: "makhar", fr: "demain", ex: "מחר בבוקר יש לי פגישה", exFr: "Demain matin j'ai un rendez-vous" },
+    { heb: "אתמול", phon: "etmol", fr: "hier", ex: "אתמול עבדתי כל היום", exFr: "Hier j'ai travaillé toute la journée" },
+    { heb: "עכשיו", phon: "akhshav", fr: "maintenant", ex: "מה אתה עושה עכשיו?", exFr: "Qu'est-ce que tu fais maintenant ?" },
+    { heb: "אחר כך", phon: "akhar kakh", fr: "ensuite / après", ex: "קודם אוכל, אחר כך עובד", exFr: "D'abord je mange, ensuite je travaille" },
+    { heb: "עוד מעט", phon: "od me'at", fr: "dans peu de temps / bientôt", ex: "עוד מעט אני מגיע", exFr: "J'arrive bientôt" },
+    { heb: "כבר", phon: "kvar", fr: "déjà", ex: "כבר קיבלתי את המייל", exFr: "J'ai déjà reçu l'e-mail" },
+    { heb: "עדיין", phon: "adayin", fr: "encore / toujours", ex: "עדיין לא סיימתי", exFr: "Je n'ai pas encore fini" },
+    { heb: "לפני", phon: "lifney", fr: "avant / il y a", ex: "לפני שעה הלכתי לשם", exFr: "Il y a une heure j'y suis allé" },
+    { heb: "אחרי", phon: "akharey", fr: "après", ex: "אחרי הפגישה נדבר", exFr: "Après la réunion on parlera" },
+    { heb: "בקרוב", phon: "bekarov", fr: "prochainement / bientôt", ex: "האתר יהיה מוכן בקרוב", exFr: "Le site sera prêt bientôt" }
+  ],
+  day1: [
+    { heb: "לקוח", phon: "lakoakh", fr: "client", ex: "הלקוח מרוצה מהאתר", exFr: "Le client est satisfait du site" },
+    { heb: "עסקה", phon: "iska", fr: "deal / transaction", ex: "סגרנו עסקה טובה", exFr: "On a conclu un bon deal" },
+    { heb: "תקציב", phon: "taktsiv", fr: "budget", ex: "מה התקציב שלך?", exFr: "Quel est ton budget ?" },
+    { heb: "הנחה", phon: "hanakha", fr: "réduction / remise", ex: "אפשר לקבל הנחה?", exFr: "Est-ce qu'on peut avoir une réduction ?" },
+    { heb: "תשלום", phon: "tashlum", fr: "paiement", ex: "התשלום בכרטיס אשראי", exFr: "Le paiement par carte de crédit" },
+    { heb: "חשבונית", phon: "kheshbonit", fr: "facture", ex: "אשלח לך חשבונית במייל", exFr: "Je t'enverrai la facture par e-mail" },
+    { heb: "חוזה", phon: "khoze", fr: "contrat", ex: "צריך לחתום על חוזה", exFr: "Il faut signer un contrat" },
+    { heb: "לנהל משא ומתן", phon: "lenahel masa u-matan", fr: "négocier", ex: "אנחנו מנהלים משא ומתן", exFr: "Nous négocions" },
+    { heb: "עמלה", phon: "amla", fr: "commission", ex: "העמלה היא עשרה אחוז", exFr: "La commission est de dix pourcent" },
+    { heb: "שירות", phon: "sherut", fr: "service", ex: "השירות שלנו מקצועי", exFr: "Notre service est professionnel" }
+  ],
+  day2: [
+    { heb: "אני רוצה", phon: "ani rotse/rotsa", fr: "je veux", ex: "אני רוצה לבנות אתר", exFr: "Je veux construire un site" },
+    { heb: "אני מתכנן", phon: "ani metkhnnen", fr: "je planifie / j'ai l'intention de", ex: "אני מתכנן להרחיב את העסק", exFr: "Je planifie d'étendre l'entreprise" },
+    { heb: "יהיה", phon: "yihye", fr: "il sera / il y aura", ex: "מחר יהיה פגישה", exFr: "Demain il y aura une réunion" },
+    { heb: "אקבל", phon: "ekabel", fr: "je recevrai", ex: "אקבל את התשלום ביום שישי", exFr: "Je recevrai le paiement vendredi" },
+    { heb: "אשלח", phon: "eshlakh", fr: "j'enverrai", ex: "אשלח לך את ההצעה", exFr: "Je t'enverrai la proposition" },
+    { heb: "נוכל", phon: "nukhal", fr: "nous pourrons", ex: "נוכל להתחיל שבוע הבא", exFr: "Nous pourrons commencer la semaine prochaine" },
+    { heb: "לגדול", phon: "ligdol", fr: "grandir / croître", ex: "העסק שלי יגדל", exFr: "Mon entreprise grandira" },
+    { heb: "מטרה", phon: "matara", fr: "objectif / but", ex: "המטרה שלי היא חמישה לקוחות", exFr: "Mon objectif est cinq clients" },
+    { heb: "תוכנית", phon: "tokhnit", fr: "plan / programme", ex: "יש לי תוכנית טובה", exFr: "J'ai un bon plan" },
+    { heb: "להצליח", phon: "lehatsliakh", fr: "réussir", ex: "אני בטוחה שנצליח", exFr: "Je suis sûre qu'on réussira" }
+  ],
+  day3: [
+    { heb: "שוק", phon: "shuk", fr: "marché", ex: "הולכים לשוק הכרמל", exFr: "On va au marché Carmel" },
+    { heb: "ממש", phon: "mamash", fr: "vraiment / franchement", ex: "זה ממש טעים", exFr: "C'est vraiment délicieux" },
+    { heb: "כמה עולה", phon: "kama ole", fr: "combien ça coûte", ex: "כמה עולה הכרטיס?", exFr: "Combien coûte le billet ?" },
+    { heb: "בבקשה", phon: "bevakasha", fr: "s'il vous plaît / de rien", ex: "תן לי קפה בבקשה", exFr: "Donne-moi un café s'il te plaît" },
+    { heb: "איפה", phon: "eyfo", fr: "où", ex: "איפה הרכב שלך?", exFr: "Où est ta voiture ?" },
+    { heb: "רחוב", phon: "rekhov", fr: "rue", ex: "אני גרה ברחוב כרמלית", exFr: "J'habite rue Carmelit" },
+    { heb: "קרוב", phon: "karov", fr: "proche / près", ex: "הסופר קרוב לבית", exFr: "Le supermarché est près de chez moi" },
+    { heb: "לחכות", phon: "lekhakot", fr: "attendre", ex: "אתה יכול לחכות קצת?", exFr: "Tu peux attendre un peu ?" },
+    { heb: "עזרה", phon: "ezra", fr: "aide / assistance", ex: "אתה צריך עזרה?", exFr: "Tu as besoin d'aide ?" },
+    { heb: "בסדר", phon: "beseder", fr: "d'accord / ça va", ex: "הכל בסדר אצלי", exFr: "Tout va bien chez moi" }
+  ],
+  day4: [
+    { heb: "זיכרון", phon: "zikaron", fr: "mémoire / souvenir", ex: "יש לי זיכרון טוב", exFr: "J'ai une bonne mémoire" },
+    { heb: "להתקדם", phon: "lehitkaden", fr: "progresser / avancer", ex: "העברית שלי מתקדמת", exFr: "Mon hébreu progresse" },
+    { heb: "שגיאה", phon: "shgi'a", fr: "erreur / faute", ex: "עשיתי שגיאה", exFr: "J'ai fait une erreur" },
+    { heb: "לחזור", phon: "lakhzor", fr: "répéter / revenir", ex: "צריך לחזור על החומר", exFr: "Il faut réviser le contenu" },
+    { heb: "להבין", phon: "lehavin", fr: "comprendre", ex: "אני לא מבינה את הדקדוק", exFr: "Je ne comprends pas la grammaire" },
+    { heb: "לדעת", phon: "lada'at", fr: "savoir", ex: "אני יודעת לדבר עברית", exFr: "Je sais parler hébreu" },
+    { heb: "שפה", phon: "safa", fr: "langue", ex: "עברית היא שפה קשה", exFr: "L'hébreu est une langue difficile" },
+    { heb: "מילה", phon: "mila", fr: "mot", ex: "למדתי מילה חדשה", exFr: "J'ai appris un nouveau mot" },
+    { heb: "תרגול", phon: "targul", fr: "pratique / exercice", ex: "תרגול יומי חשוב מאוד", exFr: "La pratique quotidienne est très importante" },
+    { heb: "בהצלחה", phon: "behatslacha", fr: "bonne chance / avec succès", ex: "בהצלחה בפגישה שלך!", exFr: "Bonne chance pour ta réunion !" }
+  ]
+};
+
+const CONJUGATION_DATA = {
+  day0: {
+    title: "Binyan Pa'al — Passé (עבר)",
+    verb: "לדבר",
+    verbFr: "parler",
+    note: "Le Binyan Pa'al est le binyan de base. Au passé, les formes 1ère pers., nous, 2ème pl. contiennent un יוד (ex: דיברתי). NE PAS l'oublier.",
+    warning: "⚠️ Ton erreur fréquente : écrire דברתי au lieu de דיברתי — le יוד est obligatoire !",
+    rows: [
+      { person: "אני", heb: "דיברתי", phon: "dibarti", fr: "j'ai parlé" },
+      { person: "אתה", heb: "דיברת", phon: "dibarta", fr: "tu as parlé (m.)" },
+      { person: "את", heb: "דיברת", phon: "dibart", fr: "tu as parlé (f.)" },
+      { person: "הוא", heb: "דיבר", phon: "diber", fr: "il a parlé" },
+      { person: "היא", heb: "דיברה", phon: "dibra", fr: "elle a parlé" },
+      { person: "אנחנו", heb: "דיברנו", phon: "dibarnu", fr: "nous avons parlé" },
+      { person: "אתם", heb: "דיברתם", phon: "dibartem", fr: "vous avez parlé (m.)" },
+      { person: "הן/הם", heb: "דיברו", phon: "dibru", fr: "ils/elles ont parlé" }
+    ],
+    quiz: [
+      { prompt: "J'ai envoyé (שלח)", answer: "שלחתי", choices: ["שלח", "שלחתי", "שלחו", "לשלוח"] },
+      { prompt: "Elle a reçu (קבל)", answer: "קיבלה", choices: ["קבלה", "קיבלה", "קיבלתי", "קבלתי"] },
+      { prompt: "Nous avons fini (סיים)", answer: "סיימנו", choices: ["סימנו", "סיימתי", "סיימנו", "סיימו"] },
+      { prompt: "Il a oublié (שכח)", answer: "שכח", choices: ["שכחתי", "שכח", "שכחה", "שכחנו"] }
+    ]
+  },
+  day1: {
+    title: "Binyan Pi'el — Présent (הווה)",
+    verb: "לדבר",
+    verbFr: "parler (Pi'el)",
+    note: "Le Pi'el exprime souvent une action intensive ou causative. Au présent il a 4 formes selon genre/nombre.",
+    warning: "💡 En Pi'el, la 2ème consonne de la racine est toujours 'doublée' (dagesh fort).",
+    rows: [
+      { person: "אני/אתה (m.)", heb: "מְדַבֵּר", phon: "medaber", fr: "je/tu parles (m.)" },
+      { person: "אני/את (f.)", heb: "מְדַבֶּרֶת", phon: "medaberet", fr: "je/tu parles (f.)" },
+      { person: "אנחנו/אתם", heb: "מְדַבְּרִים", phon: "medabrim", fr: "nous/vous parlez (m.)" },
+      { person: "אנחנו/אתן", heb: "מְדַבְּרוֹת", phon: "medabrot", fr: "nous/vous parlez (f.)" }
+    ],
+    quiz: [
+      { prompt: "Je cherche (חפש) — Pi'el présent, m.", answer: "מחפש", choices: ["חפש", "מחפש", "מחפשת", "חפשתי"] },
+      { prompt: "Elle organise (ארגן) — Pi'el présent, f.", answer: "מארגנת", choices: ["מארגן", "ארגנה", "מארגנת", "מארגנות"] },
+      { prompt: "Ils racontent (סיפר) — Pi'el présent, m. pl.", answer: "מספרים", choices: ["ספרו", "מספרים", "מספרות", "סיפרו"] },
+      { prompt: "Tu paies (שלם) — Pi'el présent, m.", answer: "משלם", choices: ["שלמת", "משלם", "משלמת", "משלמים"] }
+    ]
+  },
+  day2: {
+    title: "Futur (עתיד) — Binyan Pa'al",
+    verb: "לכתוב",
+    verbFr: "écrire",
+    note: "Le futur en Pa'al se forme avec des préfixes : א (ani), ת (ata/at), י (hu), ת (hi), נ (anakhnu), ת+ו (atem), י+ו (hem).",
+    warning: "💡 Les préfixes futur : א-ת-י-ת-נ-ת-י. Mémorise-les comme une formule.",
+    rows: [
+      { person: "אני", heb: "אכתוב", phon: "ekhtov", fr: "j'écrirai" },
+      { person: "אתה", heb: "תכתוב", phon: "tikhtov", fr: "tu écriras (m.)" },
+      { person: "את", heb: "תכתבי", phon: "tikhtevi", fr: "tu écriras (f.)" },
+      { person: "הוא", heb: "יכתוב", phon: "yikhtov", fr: "il écrira" },
+      { person: "היא", heb: "תכתוב", phon: "tikhtov", fr: "elle écrira" },
+      { person: "אנחנו", heb: "נכתוב", phon: "nikhtov", fr: "nous écrirons" },
+      { person: "אתם", heb: "תכתבו", phon: "tikhtvu", fr: "vous écrirez" },
+      { person: "הם/הן", heb: "יכתבו", phon: "yikhtvu", fr: "ils/elles écriront" }
+    ],
+    quiz: [
+      { prompt: "J'enverrai (שלח) — futur", answer: "אשלח", choices: ["שלחתי", "אשלח", "ישלח", "נשלח"] },
+      { prompt: "Elle ira (הלך) — futur", answer: "תלך", choices: ["הלכה", "ילך", "תלך", "תלכי"] },
+      { prompt: "Nous recevrons (קבל) — futur", answer: "נקבל", choices: ["קיבלנו", "יקבלו", "נקבל", "תקבל"] },
+      { prompt: "Ils construiront (בנה) — futur", answer: "יבנו", choices: ["בנו", "יבנה", "תבנו", "יבנו"] }
+    ]
+  },
+  day3: {
+    title: "Binyan Hif'il — Présent & Passé",
+    verb: "להגיע",
+    verbFr: "arriver / parvenir",
+    note: "Le Hif'il est causatif : il signifie 'faire faire quelque chose'. Il commence toujours par ה au passé et מ au présent.",
+    warning: "💡 Hif'il passé : הִ + racine + terminaisons. Ex: הגעתי (j'ai atteint), הסברתי (j'ai expliqué).",
+    rows: [
+      { person: "אני (passé)", heb: "הגעתי", phon: "higa'ti", fr: "je suis arrivé(e)" },
+      { person: "הוא (passé)", heb: "הגיע", phon: "higi'a", fr: "il est arrivé" },
+      { person: "היא (passé)", heb: "הגיעה", phon: "higi'a", fr: "elle est arrivée" },
+      { person: "אני (présent m.)", heb: "מגיע", phon: "magi'a", fr: "j'arrive (m.)" },
+      { person: "אני (présent f.)", heb: "מגיעה", phon: "magi'a", fr: "j'arrive (f.)" },
+      { person: "אנחנו (présent)", heb: "מגיעים", phon: "magi'im", fr: "nous arrivons" }
+    ],
+    quiz: [
+      { prompt: "J'ai expliqué (הסביר) — passé", answer: "הסברתי", choices: ["סברתי", "הסברתי", "מסביר", "הסבירה"] },
+      { prompt: "Il a montré (הראה) — passé", answer: "הראה", choices: ["ראה", "הראה", "מראה", "הראיתי"] },
+      { prompt: "Nous mettons en valeur (הדגיש) — présent", answer: "מדגישים", choices: ["הדגשנו", "מדגיש", "מדגישים", "הדגישו"] },
+      { prompt: "Elle a réussi (הצליח) — passé", answer: "הצליחה", choices: ["הצליח", "הצליחה", "מצליחה", "הצלחתי"] }
+    ]
+  },
+  day4: {
+    title: "Quiz mixte — Les 4 Binyanim",
+    verb: "révision",
+    verbFr: "Pa'al / Pi'el / Hif'il / Hitpa'el",
+    note: "Révision des binyanim de la semaine. Identifie le binyan et la bonne forme.",
+    warning: "⚠️ Rappel de tes erreurs : יוד manquant (Pa'al passé), dagesh Pi'el, ה- Hif'il.",
+    rows: [
+      { person: "Pa'al passé אני", heb: "דיברתי / שלחתי / קיבלתי", phon: "dibarti / shalaḥti / kibalti", fr: "j'ai parlé / envoyé / reçu" },
+      { person: "Pi'el présent", heb: "מדבר / מחפש / משלם", phon: "medaber / mekhapes / meshalam", fr: "je parle / cherche / paie" },
+      { person: "Hif'il passé", heb: "הגעתי / הסברתי / הראיתי", phon: "higa'ti / hesbarti / hereiti", fr: "je suis arrivé / j'ai expliqué / j'ai montré" },
+      { person: "Futur Pa'al", heb: "אשלח / אכתוב / אקבל", phon: "eshlakh / ekhtov / ekabel", fr: "j'enverrai / j'écrirai / je recevrai" }
+    ],
+    quiz: [
+      { prompt: "Quel binyan est מְאַרְגֵן ?", answer: "Pi'el", choices: ["Pa'al", "Pi'el", "Hif'il", "Hitpa'el"] },
+      { prompt: "Forme correcte : 'j'ai expliqué'", answer: "הסברתי", choices: ["סברתי", "מסביר", "הסברתי", "הסביר"] },
+      { prompt: "Futur de לקבל (je)", answer: "אקבל", choices: ["קיבלתי", "אקבל", "נקבל", "תקבל"] },
+      { prompt: "Quel binyan est הצלחתי ?", answer: "Hif'il", choices: ["Pa'al", "Pi'el", "Hif'il", "Nif'al"] }
+    ]
+  }
+};
+
+const FILL_DATA = {
+  day0: {
+    title: "Temps et progression",
+    sentences: [
+      { before: "אני", blank: "שלחתי", after: "את המייל אתמול.", hint: "passé de שלח (j'ai envoyé)", fr: "J'ai envoyé l'e-mail hier." },
+      { before: "", blank: "מחר", after: "אני נוסעת לתל אביב.", hint: "demain", fr: "Demain je voyage à Tel Aviv." },
+      { before: "הוא", blank: "עדיין", after: "לא סיים את הפרויקט.", hint: "encore / toujours", fr: "Il n'a pas encore fini le projet." },
+      { before: "כבר", blank: "קיבלתי", after: "את הכסף.", hint: "passé de קבל (j'ai reçu)", fr: "J'ai déjà reçu l'argent." },
+      { before: "", blank: "אחרי", after: "הפגישה, נדבר על המחיר.", hint: "après", fr: "Après la réunion, on parlera du prix." }
+    ]
+  },
+  day1: {
+    title: "Vocabulaire commercial",
+    sentences: [
+      { before: "הלקוח ביקש", blank: "הנחה", after: "של עשרה אחוז.", hint: "réduction", fr: "Le client a demandé une réduction de 10%." },
+      { before: "שלחתי", blank: "חשבונית", after: "במייל.", hint: "facture", fr: "J'ai envoyé la facture par e-mail." },
+      { before: "צריך לחתום על", blank: "חוזה", after: "לפני שמתחילים.", hint: "contrat", fr: "Il faut signer un contrat avant de commencer." },
+      { before: "ה", blank: "תקציב", after: "של הלקוח הוא שלושת אלפים שקל.", hint: "budget", fr: "Le budget du client est de 3000 shekels." },
+      { before: "אנחנו מציעים", blank: "שירות", after: "מקצועי ומהיר.", hint: "service", fr: "Nous offrons un service professionnel et rapide." }
+    ]
+  },
+  day2: {
+    title: "Parler du futur",
+    sentences: [
+      { before: "שבוע הבא", blank: "אשלח", after: "לך את ההצעה.", hint: "futur de שלח (j'enverrai)", fr: "La semaine prochaine je t'enverrai la proposition." },
+      { before: "האתר", blank: "יהיה", after: "מוכן תוך 48 שעות.", hint: "il sera (futur de היה)", fr: "Le site sera prêt en 48 heures." },
+      { before: "אנחנו", blank: "נוכל", after: "להתחיל ביום שני.", hint: "nous pourrons (futur de יכול)", fr: "Nous pourrons commencer lundi." },
+      { before: "המטרה שלי היא", blank: "להצליח", after: "בשוק הישראלי.", hint: "infinitif : réussir", fr: "Mon objectif est de réussir sur le marché israélien." },
+      { before: "יש לי", blank: "תוכנית", after: "טובה לשיווק.", hint: "plan", fr: "J'ai un bon plan marketing." }
+    ]
+  },
+  day3: {
+    title: "Vie quotidienne",
+    sentences: [
+      { before: "", blank: "כמה עולה", after: "הקפה כאן?", hint: "combien ça coûte", fr: "Combien coûte le café ici ?" },
+      { before: "הסופר", blank: "קרוב", after: "לבית שלי.", hint: "proche / près", fr: "Le supermarché est proche de chez moi." },
+      { before: "אני גרה ב", blank: "רחוב", after: "כרמלית.", hint: "rue", fr: "J'habite rue Carmelit." },
+      { before: "", blank: "בבקשה", after: "תן לי את התפריט.", hint: "s'il te plaît", fr: "S'il te plaît, donne-moi le menu." },
+      { before: "הכל", blank: "בסדר", after: "אצלי, תודה.", hint: "ça va / d'accord", fr: "Tout va bien chez moi, merci." }
+    ]
+  },
+  day4: {
+    title: "Révision — Tes erreurs récurrentes",
+    sentences: [
+      { before: "אני", blank: "דיברתי", after: "עם הלקוח אתמול.", hint: "passé Pa'al, 1ère pers. — ATTENTION au יוד !", fr: "J'ai parlé avec le client hier." },
+      { before: "", blank: "מחר", after: "בבוקר יש לי פגישה.", hint: "demain — pas מרח !", fr: "Demain matin j'ai une réunion." },
+      { before: "היא", blank: "שכחה", after: "את הפגישה.", hint: "passé de שכח, 3ème pers. f.", fr: "Elle a oublié le rendez-vous." },
+      { before: "אני", blank: "קיבלתי", after: "את התשלום.", hint: "passé de קבל — avec יוד !", fr: "J'ai reçu le paiement." },
+      { before: "הוא", blank: "הגיע", after: "בזמן לפגישה.", hint: "Hif'il passé de הגיע (arriver)", fr: "Il est arrivé à l'heure à la réunion." }
+    ]
+  }
+};
+
+const READING_DATA = {
+  day0: {
+    title: "מייל קצר — שיחה מקצועית",
+    subtitle: "Lis cet e-mail professionnel. Clique sur les mots inconnus pour voir la traduction.",
+    text: [
+      { w: "שלום", t: "Bonjour" }, { w: "אבי,", t: "Avi," },
+      { w: "\n\n" },
+      { w: "אני", t: "je" }, { w: "רוצה", t: "veux" }, { w: "לעדכן", t: "mettre à jour" }, { w: "אותך", t: "toi (acc.)" },
+      { w: "לגבי", t: "concernant" }, { w: "הפרויקט.", t: "le projet." },
+      { w: "\n" },
+      { w: "אתמול", t: "hier" }, { w: "סיימתי", t: "j'ai terminé" }, { w: "את", t: "acc." }, { w: "הדף", t: "la page" },
+      { w: "הראשון", t: "première" }, { w: "של", t: "de" }, { w: "האתר.", t: "le site." },
+      { w: "\n" },
+      { w: "מחר", t: "demain" }, { w: "אני", t: "je" }, { w: "אשלח", t: "j'enverrai" }, { w: "לך", t: "à toi" },
+      { w: "הצעת", t: "proposition de" }, { w: "מחיר", t: "prix" }, { w: "מפורטת.", t: "détaillée." },
+      { w: "\n" },
+      { w: "אני", t: "je" }, { w: "בטוחה", t: "sûre (f.)" }, { w: "שתהיה", t: "que tu seras" }, { w: "מרוצה.", t: "satisfait." },
+      { w: "\n\n" },
+      { w: "תודה,", t: "Merci," },
+      { w: "\n" },
+      { w: "מרגו", t: "Margaux" }
+    ],
+    questions: [
+      { q: "Qu'est-ce que la locutrice a terminé hier ?", a: "La première page du site (הדף הראשון של האתר)" },
+      { q: "Que va-t-elle envoyer demain ?", a: "Une proposition de prix détaillée (הצעת מחיר מפורטת)" },
+      { q: "Quel est le sentiment de la locutrice ?", a: "Elle est sûre que le destinataire sera satisfait" }
+    ]
+  },
+  day1: {
+    title: "שיחה בין עסקים",
+    subtitle: "Un dialogue entre deux entrepreneurs. Clique sur les mots inconnus.",
+    text: [
+      { w: "יעל:", t: "Yael:" }, { w: "שלום!", t: "Bonjour!" }, { w: "שמעתי", t: "j'ai entendu" }, { w: "עליך", t: "parler de toi" }, { w: "מאבי.", t: "par Avi." },
+      { w: "\n" },
+      { w: "מרגו:", t: "Margaux:" }, { w: "כן,", t: "oui," }, { w: "אנחנו", t: "nous" }, { w: "עובדים", t: "travaillons" }, { w: "יחד", t: "ensemble" }, { w: "כבר", t: "déjà" }, { w: "חודש.", t: "un mois." },
+      { w: "\n" },
+      { w: "יעל:", t: "Yael:" }, { w: "מה", t: "qu'est-ce que" }, { w: "השירות", t: "le service" }, { w: "שלך?", t: "le tien?" },
+      { w: "\n" },
+      { w: "מרגו:", t: "Margaux:" }, { w: "אני", t: "je" }, { w: "בונה", t: "construis" }, { w: "אתרים", t: "des sites" }, { w: "מקצועיים", t: "professionnels" }, { w: "תוך", t: "en" }, { w: "48", t: "48" }, { w: "שעות.", t: "heures." },
+      { w: "\n" },
+      { w: "יעל:", t: "Yael:" }, { w: "כמה", t: "combien" }, { w: "זה", t: "ça" }, { w: "עולה?", t: "coûte?" },
+      { w: "\n" },
+      { w: "מרגו:", t: "Margaux:" }, { w: "אלף", t: "mille" }, { w: "תשע", t: "neuf" }, { w: "מאות", t: "cents" }, { w: "ותשעים", t: "et quatre-vingt-dix" }, { w: "שקל", t: "shekels" }, { w: "בלבד.", t: "seulement." }
+    ],
+    questions: [
+      { q: "Comment Yael a-t-elle entendu parler de Margaux ?", a: "Par Avi (מאבי)" },
+      { q: "Quel service offre Margaux ?", a: "Création de sites professionnels en 48h" },
+      { q: "Quel est le prix ?", a: "1990 shekels (אלף תשע מאות ותשעים שקל)" }
+    ]
+  },
+  day2: {
+    title: "תוכניות לשבוע הבא",
+    subtitle: "Un message sur les plans de la semaine prochaine.",
+    text: [
+      { w: "שבוע", t: "semaine" }, { w: "הבא", t: "prochaine" }, { w: "יהיה", t: "sera" }, { w: "עמוס.", t: "chargé." },
+      { w: "\n" },
+      { w: "ביום", t: "le jour" }, { w: "שני", t: "lundi" }, { w: "אפגש", t: "je rencontrerai" }, { w: "עם", t: "avec" }, { w: "לקוח", t: "client" }, { w: "חדש", t: "nouveau" }, { w: "בתל", t: "à Tel" }, { w: "אביב.", t: "Aviv." },
+      { w: "\n" },
+      { w: "ביום", t: "le jour" }, { w: "שלישי", t: "mardi" }, { w: "אגמור", t: "je terminerai" }, { w: "את", t: "acc." }, { w: "האתר", t: "le site" }, { w: "של", t: "de" }, { w: "הפיצרייה.", t: "la pizzeria." },
+      { w: "\n" },
+      { w: "ביום", t: "le" }, { w: "חמישי", t: "jeudi" }, { w: "אשלח", t: "j'enverrai" }, { w: "חשבוניות", t: "des factures" }, { w: "לכל", t: "à tous" }, { w: "הלקוחות.", t: "les clients." },
+      { w: "\n\n" },
+      { w: "המטרה", t: "l'objectif" }, { w: "שלי:", t: "le mien:" }, { w: "חמישה", t: "cinq" }, { w: "לקוחות", t: "clients" }, { w: "חדשים", t: "nouveaux" }, { w: "עד", t: "jusqu'à" }, { w: "סוף", t: "la fin" }, { w: "החודש.", t: "du mois." }
+    ],
+    questions: [
+      { q: "Que se passe-t-il lundi ?", a: "Réunion avec un nouveau client à Tel Aviv" },
+      { q: "Quel est l'objectif mentionné ?", a: "5 nouveaux clients avant la fin du mois" },
+      { q: "Que fera-t-elle jeudi ?", a: "Envoyer des factures à tous les clients" }
+    ]
+  },
+  day3: {
+    title: "יום בתל אביב",
+    subtitle: "Une journée typique à Tel Aviv. Comprends le texte, réponds aux questions.",
+    text: [
+      { w: "הבוקר", t: "ce matin" }, { w: "קמתי", t: "je me suis levée" }, { w: "מוקדם", t: "tôt" }, { w: "והלכתי", t: "et je suis allée" }, { w: "לשוק", t: "au marché" }, { w: "הכרמל.", t: "Carmel." },
+      { w: "\n" },
+      { w: "קניתי", t: "j'ai acheté" }, { w: "ירקות", t: "des légumes" }, { w: "ופירות", t: "et des fruits" }, { w: "טריים.", t: "frais." },
+      { w: "\n" },
+      { w: "אחר", t: "après" }, { w: "כך", t: "cela" }, { w: "ישבתי", t: "je me suis assise" }, { w: "בבית", t: "dans un" }, { w: "קפה", t: "café" }, { w: "קרוב", t: "proche" }, { w: "לים", t: "de la mer" }, { w: "ועבדתי", t: "et j'ai travaillé" }, { w: "שעתיים.", t: "deux heures." },
+      { w: "\n" },
+      { w: "בצהריים", t: "à midi" }, { w: "פגשתי", t: "j'ai rencontré" }, { w: "לקוח", t: "un client" }, { w: "פוטנציאלי.", t: "potentiel." },
+      { w: "\n" },
+      { w: "זה", t: "c'était" }, { w: "היה", t: "était" }, { w: "יום", t: "une journée" }, { w: "ממש", t: "vraiment" }, { w: "טוב.", t: "bonne." }
+    ],
+    questions: [
+      { q: "Où est-elle allée ce matin ?", a: "Au marché Carmel (שוק הכרמל)" },
+      { q: "Qu'a-t-elle fait au café ?", a: "Elle a travaillé deux heures" },
+      { q: "Qui a-t-elle rencontré à midi ?", a: "Un client potentiel" }
+    ]
+  },
+  day4: {
+    title: "סיכום שבועי — Programme Mizra",
+    subtitle: "Texte de révision. Lis attentivement, traduis mentalement chaque phrase.",
+    text: [
+      { w: "השבוע", t: "cette semaine" }, { w: "עבדתי", t: "j'ai travaillé" }, { w: "קשה", t: "dur" }, { w: "ולמדתי", t: "et j'ai appris" }, { w: "הרבה.", t: "beaucoup." },
+      { w: "\n" },
+      { w: "פגשתי", t: "j'ai rencontré" }, { w: "ארבעה", t: "quatre" }, { w: "לקוחות", t: "clients" }, { w: "חדשים", t: "nouveaux" }, { w: "ושלחתי", t: "et j'ai envoyé" }, { w: "הצעות", t: "des propositions" }, { w: "מחיר.", t: "de prix." },
+      { w: "\n" },
+      { w: "גם", t: "aussi" }, { w: "הצלחתי", t: "j'ai réussi" }, { w: "לסגור", t: "à conclure" }, { w: "שתי", t: "deux" }, { w: "עסקאות", t: "transactions" }, { w: "חדשות.", t: "nouvelles." },
+      { w: "\n\n" },
+      { w: "שבוע", t: "semaine" }, { w: "הבא", t: "prochaine" }, { w: "אמשיך", t: "je continuerai" }, { w: "לשלוח", t: "à envoyer" }, { w: "הודעות", t: "des messages" }, { w: "בווטסאפ", t: "sur WhatsApp" }, { w: "ולפנות", t: "et à contacter" }, { w: "לעסקים", t: "des entreprises" }, { w: "חדשים.", t: "nouvelles." },
+      { w: "\n" },
+      { w: "המטרה:", t: "L'objectif:" }, { w: "עשרה", t: "dix" }, { w: "לקוחות", t: "clients" }, { w: "בחודש.", t: "par mois." }
+    ],
+    questions: [
+      { q: "Combien de nouveaux clients a-t-elle rencontrés ?", a: "Quatre (ארבעה לקוחות חדשים)" },
+      { q: "Combien de transactions a-t-elle conclues ?", a: "Deux (שתי עסקאות חדשות)" },
+      { q: "Quel est son objectif mensuel ?", a: "Dix clients par mois (עשרה לקוחות בחודש)" }
+    ]
+  }
+};
+
+const TRANSLATION_DATA = {
+  day0: {
+    title: "Traduction FR → HEB",
+    direction: "fr2heb",
+    pairs: [
+      { src: "J'ai envoyé l'e-mail hier.", target: "שלחתי את המייל אתמול.", note: "שלחתי = passé de שלח (j'ai envoyé)" },
+      { src: "Demain j'aurai une réunion importante.", target: "מחר תהיה לי פגישה חשובה.", note: "תהיה לי = il y aura pour moi (futur de היה)" },
+      { src: "Je n'ai pas encore fini le projet.", target: "עדיין לא סיימתי את הפרויקט.", note: "עדיין לא = pas encore" },
+      { src: "Il a déjà reçu le paiement.", target: "הוא כבר קיבל את התשלום.", note: "כבר = déjà" }
+    ]
+  },
+  day1: {
+    title: "Traduction HEB → FR",
+    direction: "heb2fr",
+    pairs: [
+      { src: "הלקוח רוצה הנחה של חמישה אחוז.", target: "Le client veut une réduction de 5%.", note: "הנחה = réduction, אחוז = pourcent" },
+      { src: "שלחתי חשבונית במייל.", target: "J'ai envoyé la facture par e-mail.", note: "חשבונית = facture" },
+      { src: "אנחנו מציעים שירות מקצועי ומהיר.", target: "Nous offrons un service professionnel et rapide.", note: "מקצועי = professionnel, מהיר = rapide" },
+      { src: "צריך לחתום על חוזה לפני שמתחילים.", target: "Il faut signer un contrat avant de commencer.", note: "לחתום = signer, חוזה = contrat" }
+    ]
+  },
+  day2: {
+    title: "Traduction FR → HEB — Futur",
+    direction: "fr2heb",
+    pairs: [
+      { src: "La semaine prochaine j'enverrai la proposition.", target: "שבוע הבא אשלח את ההצעה.", note: "אשלח = futur de שלח" },
+      { src: "Le site sera prêt en 48 heures.", target: "האתר יהיה מוכן תוך 48 שעות.", note: "יהיה = il sera (futur de היה)" },
+      { src: "Nous pourrons commencer lundi.", target: "נוכל להתחיל ביום שני.", note: "נוכל = nous pourrons (futur de יכול)" },
+      { src: "J'espère que tu réussiras.", target: "אני מקווה שתצליח.", note: "מקווה = j'espère, תצליח = tu réussiras" }
+    ]
+  },
+  day3: {
+    title: "Traduction HEB → FR — Quotidien",
+    direction: "heb2fr",
+    pairs: [
+      { src: "כמה עולה הקפה כאן?", target: "Combien coûte le café ici ?", note: "כמה עולה = combien ça coûte" },
+      { src: "הסופר קרוב לבית שלי.", target: "Le supermarché est près de chez moi.", note: "קרוב = proche/près" },
+      { src: "אתה יכול לחכות קצת?", target: "Tu peux attendre un peu ?", note: "לחכות = attendre, קצת = un peu" },
+      { src: "קמתי מוקדם והלכתי לשוק.", target: "Je me suis levée tôt et je suis allée au marché.", note: "קמתי = je me suis levé(e), מוקדם = tôt" }
+    ]
+  },
+  day4: {
+    title: "Traduction mixte — Révision",
+    direction: "mixed",
+    pairs: [
+      { src: "Cette semaine j'ai appris beaucoup de nouveaux mots.", target: "השבוע למדתי הרבה מילים חדשות.", note: "למדתי = j'ai appris, מילים = mots" },
+      { src: "פגשתי ארבעה לקוחות חדשים.", target: "J'ai rencontré quatre nouveaux clients.", note: "פגשתי = j'ai rencontré, ארבעה = quatre" },
+      { src: "La semaine prochaine je continuerai à envoyer des messages.", target: "שבוע הבא אמשיך לשלוח הודעות.", note: "אמשיך = je continuerai, הודעות = messages" },
+      { src: "הצלחתי לסגור שתי עסקאות חדשות.", target: "J'ai réussi à conclure deux nouvelles transactions.", note: "הצלחתי = j'ai réussi, לסגור = conclure" }
+    ]
+  }
+};
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  week: getWeekKey(),
+  days: {},       // { 0: { completed: true, score: 85, details: {...} } }
+  vocab: {},      // { word: { known:n, unknown:n } }
+  currentDay: 0,
+  currentEx: 0,
+  exScores: {},
+  sessionTimer: null,
+  sessionSeconds: 0,
+  quizCorrect: 0,
+  quizTotal: 0
+};
+
+function getWeekKey() {
+  const d = new Date();
+  const jan = new Date(d.getFullYear(), 0, 1);
+  const week = Math.ceil(((d - jan) / 86400000 + jan.getDay() + 1) / 7);
+  return `${d.getFullYear()}-W${week}`;
+}
+
+function loadState() {
+  const saved = localStorage.getItem('heb_state_v2');
+  if (saved) {
+    const s = JSON.parse(saved);
+    if (s.week === state.week) {
+      state = { ...state, ...s };
+    }
+  }
+}
+
+function saveState() {
+  const toSave = {
+    week: state.week,
+    days: state.days,
+    vocab: state.vocab
+  };
+  localStorage.setItem('heb_state_v2', JSON.stringify(toSave));
+}
+
+// ============================================================
+// INIT
+// ============================================================
+loadState();
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('app').style.display = 'block';
+      renderHome();
+      renderStats();
+      buildDayDots();
+    }, 600);
+  }, 1200);
+});
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('v-' + v).classList.add('active');
+  document.getElementById('nb-' + v).classList.add('active');
+  if (v === 'stats') renderStats();
+}
+
+// ============================================================
+// HOME
+// ============================================================
+const DAY_NAMES = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi'];
+const SHORT_DAY = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu'];
+
+function renderHome() {
+  const grid = document.getElementById('weekGrid');
+  grid.innerHTML = '';
+
+  // Determine today (0-4 = Sun-Thu)
+  const dow = new Date().getDay();
+  const todayIdx = [0,1,2,3,4].includes(dow) ? [0,1,2,3,4].indexOf(dow) :
+                    dow === 5 ? 4 : 0; // fri -> day4, sat -> day0
+
+  DAYS.forEach((day, i) => {
+    const done = state.days[i]?.completed;
+    const isToday = i === todayIdx;
+    const score = state.days[i]?.score;
+
+    let cls = 'day-card';
+    if (done) cls += ' done';
+    else if (isToday) cls += ' today';
+
+    const scoreHtml = done
+      ? `<div class="dc-score ${score>=80?'good':'avg'}">${score}%</div>`
+      : isToday
+        ? `<div class="dc-score none">À faire</div>`
+        : `<div class="dc-score none">—</div>`;
+
+    grid.innerHTML += `
+      <div class="${cls}" onclick="startSession(${i})">
+        <div class="dc-day">${SHORT_DAY[i]}</div>
+        <div class="dc-title">${day.title}</div>
+        <div class="dc-focus">${day.focus}</div>
+        ${scoreHtml}
+        ${done ? '<div class="dc-badge">✓</div>' : isToday ? '<div class="dc-badge">▶</div>' : ''}
+      </div>
+    `;
+  });
+
+  // Stats
+  const completed = Object.values(state.days).filter(d=>d.completed).length;
+  const scores = Object.values(state.days).filter(d=>d.score).map(d=>d.score);
+  const avgScore = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+  const wordsCount = Object.keys(state.vocab).length;
+  const streak = completed; // simplified
+
+  document.getElementById('st-sessions').textContent = completed;
+  document.getElementById('st-words').textContent = wordsCount;
+  document.getElementById('st-score').textContent = avgScore ? avgScore + '%' : '—';
+  document.getElementById('st-streak').textContent = streak;
+
+  const btn = document.getElementById('mainStartBtn');
+  const next = DAYS.findIndex((_, i) => !state.days[i]?.completed);
+  if (next === -1) btn.textContent = '🏆 Semaine terminée ! Réviser';
+  else btn.onclick = () => startSession(next);
+}
+
+function startTodaySession() {
+  const dow = new Date().getDay();
+  const todayIdx = [0,1,2,3,4].indexOf(dow) >= 0 ? [0,1,2,3,4].indexOf(dow) : 0;
+  startSession(todayIdx);
+}
+
+function buildDayDots() {
+  const container = document.getElementById('dayDots');
+  container.innerHTML = '';
+  const dow = new Date().getDay();
+  const todayIdx = [0,1,2,3,4].indexOf(dow) >= 0 ? [0,1,2,3,4].indexOf(dow) : 0;
+
+  DAYS.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'day-dot' + (state.days[i]?.completed ? ' done' : i === todayIdx ? ' today' : '');
+    container.appendChild(d);
+  });
+}
+
+// ============================================================
+// SESSION
+// ============================================================
+function startSession(dayIdx) {
+  state.currentDay = dayIdx;
+  state.currentEx = 0;
+  state.exScores = {};
+  state.quizCorrect = 0;
+  state.quizTotal = 0;
+  state.sessionSeconds = 0;
+
+  showView('session');
+
+  const day = DAYS[dayIdx];
+  document.getElementById('sidebarDayTitle').textContent = `Jour ${dayIdx+1} — ${day.title}`;
+
+  renderExerciseList();
+  loadExercise(0);
+  startSessionTimer();
+}
+
+function renderExerciseList() {
+  const day = DAYS[state.currentDay];
+  const list = document.getElementById('exerciseList');
+  list.innerHTML = '';
+
+  day.exercises.forEach((ex, i) => {
+    const done = state.exScores[i] !== undefined;
+    const active = i === state.currentEx;
+    list.innerHTML += `
+      <div class="exercise-item ${active?'active':''} ${done?'completed':''}" id="ei-${i}" onclick="loadExercise(${i})">
+        <span class="ei-icon">${ex.icon}</span>
+        <span>${ex.label}</span>
+        <span class="ei-time">${done ? (state.exScores[i]+'%') : ex.duration}</span>
+      </div>
+    `;
+  });
+}
+
+function updateProgress() {
+  const day = DAYS[state.currentDay];
+  const total = day.exercises.length - 1; // -1 for summary
+  const done = Object.keys(state.exScores).length;
+  const pct = Math.round(done / total * 100);
+  document.getElementById('progText').textContent = done + ' / ' + total;
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progFill').style.width = pct + '%';
+}
+
+function startSessionTimer() {
+  if (state.sessionTimer) clearInterval(state.sessionTimer);
+  const pill = document.getElementById('globalTimer');
+  pill.classList.add('running');
+  state.sessionTimer = setInterval(() => {
+    state.sessionSeconds++;
+    const m = String(Math.floor(state.sessionSeconds/60)).padStart(2,'0');
+    const s = String(state.sessionSeconds%60).padStart(2,'0');
+    pill.textContent = m + ':' + s;
+  }, 1000);
+}
+
+// ============================================================
+// EXERCISE LOADER
+// ============================================================
+function loadExercise(idx) {
+  state.currentEx = idx;
+
+  // Update sidebar
+  document.querySelectorAll('.exercise-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+  });
+
+  const day = DAYS[state.currentDay];
+  const ex = day.exercises[idx];
+  const area = document.getElementById('exerciseArea');
+
+  switch(ex.type) {
+    case 'flashcards': area.innerHTML = buildFlashcards(state.currentDay); initFlashcards(); break;
+    case 'conjugation': area.innerHTML = buildConjugation(state.currentDay); initConjQuiz(); break;
+    case 'fillblanks': area.innerHTML = buildFillBlanks(state.currentDay); initFillBlanks(); break;
+    case 'reading': area.innerHTML = buildReading(state.currentDay); initReading(); break;
+    case 'translation': area.innerHTML = buildTranslation(state.currentDay); initTranslation(); break;
+    case 'summary': area.innerHTML = buildSummary(); break;
+  }
+}
+
+function nextExercise(score) {
+  const day = DAYS[state.currentDay];
+  state.exScores[state.currentEx] = score || 100;
+  updateProgress();
+  renderExerciseList();
+
+  const next = state.currentEx + 1;
+  if (next < day.exercises.length) {
+    loadExercise(next);
+  } else {
+    loadExercise(day.exercises.length - 1);
+  }
+}
+
+// ============================================================
+// FLASHCARDS
+// ============================================================
+let flashState = { cards:[], idx:0, known:0, unknown:0, revealed:false };
+
+function buildFlashcards(dayIdx) {
+  const ex = DAYS[dayIdx].exercises[0];
+  return `
+    <div>
+      <div class="ex-header">
+        <div>
+          <div class="ex-tag">Vocabulaire · Flashcards</div>
+          <h2 class="ex-title">${ex.label}</h2>
+          <p class="ex-subtitle">Clique sur la carte pour révéler. Sois honnête.</p>
+        </div>
+      </div>
+      <div class="vocab-flash-deck">
+        <div class="flash-progress" id="flashProg">—</div>
+        <div class="flash-card" id="flashCard" onclick="revealFlash()">
+          <div id="flashFront">
+            <div class="flash-heb" id="flashHeb"></div>
+            <div class="flash-hint">Clique pour voir la traduction</div>
+          </div>
+          <div class="reveal-content" id="flashBack">
+            <div class="flash-reveal" id="flashFr"></div>
+            <div class="flash-phon" id="flashPhon"></div>
+            <div class="flash-example" id="flashEx"></div>
+          </div>
+        </div>
+        <div class="flash-actions" id="flashActions" style="display:none;">
+          <button class="fa-btn fa-unknown" onclick="flashAnswer(false)">✗ À revoir</button>
+          <button class="fa-btn fa-skip" onclick="flashAnswer(null)">→ Passer</button>
+          <button class="fa-btn fa-knew" onclick="flashAnswer(true)">✓ Je savais</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function initFlashcards() {
+  const dayIdx = state.currentDay;
+  const key = 'day' + dayIdx;
+  flashState = {
+    cards: [...(VOCAB[key] || [])].sort(() => Math.random() - 0.5),
+    idx: 0, known: 0, unknown: 0, revealed: false
+  };
+  showFlashCard();
+}
+
+function showFlashCard() {
+  const { cards, idx } = flashState;
+  if (idx >= cards.length) {
+    endFlash();
+    return;
+  }
+  const card = cards[idx];
+  document.getElementById('flashProg').textContent = `${idx+1} / ${cards.length} — Connus: ${flashState.known} · À revoir: ${flashState.unknown}`;
+  document.getElementById('flashHeb').textContent = card.heb;
+  document.getElementById('flashFr').textContent = card.fr;
+  document.getElementById('flashPhon').textContent = card.phon;
+  document.getElementById('flashEx').innerHTML = `<span class="heb-inline">${card.ex}</span><br><em style="color:var(--muted); font-size:0.82rem;">${card.exFr}</em>`;
+  document.getElementById('flashBack').classList.remove('visible');
+  document.getElementById('flashActions').style.display = 'none';
+  flashState.revealed = false;
+}
+
+function revealFlash() {
+  if (flashState.revealed) return;
+  flashState.revealed = true;
+  document.getElementById('flashBack').classList.add('visible');
+  document.getElementById('flashActions').style.display = 'flex';
+}
+
+function flashAnswer(knew) {
+  const card = flashState.cards[flashState.idx];
+  if (knew === true) flashState.known++;
+  else if (knew === false) flashState.unknown++;
+
+  if (state.vocab[card.heb] === undefined) state.vocab[card.heb] = { known:0, unknown:0, fr:card.fr };
+  if (knew === true) state.vocab[card.heb].known++;
+  else if (knew === false) state.vocab[card.heb].unknown++;
+
+  flashState.idx++;
+  if (flashState.idx >= flashState.cards.length) {
+    endFlash();
+  } else {
+    showFlashCard();
+  }
+}
+
+function endFlash() {
+  const pct = flashState.cards.length > 0 ? Math.round(flashState.known / flashState.cards.length * 100) : 100;
+  document.querySelector('.vocab-flash-deck').innerHTML = `
+    <div style="text-align:center; padding:40px;">
+      <div style="font-size:3rem; margin-bottom:16px;">${pct>=80?'🎯':pct>=60?'👍':'📚'}</div>
+      <div style="font-size:1.4rem; font-weight:600; margin-bottom:8px;">${pct}% connus</div>
+      <div style="color:var(--muted); margin-bottom:24px; font-style:italic;">${flashState.known} connus · ${flashState.unknown} à retravailler</div>
+      <button class="btn btn-next" onclick="nextExercise(${pct})">Exercice suivant →</button>
+    </div>
+  `;
+  saveState();
+}
+
+// ============================================================
+// CONJUGATION
+// ============================================================
+let conjState = { quiz:[], current:0, correct:0, answered:false };
+
+function buildConjugation(dayIdx) {
+  const data = CONJUGATION_DATA['day' + dayIdx];
+  const ex = DAYS[dayIdx].exercises[1];
+  const rows = data.rows.map(r => `
+    <tr>
+      <td style="font-family:'IBM Plex Mono',monospace; font-size:0.85rem; color:var(--muted);">${r.person}</td>
+      <td>${r.fr}</td>
+      <td class="td-heb">${r.heb}</td>
+      <td style="font-family:'IBM Plex Mono',monospace; font-size:0.8rem; color:var(--muted);">${r.phon}</td>
+    </tr>
+  `).join('');
+
+  return `
+    <div>
+      <div class="ex-header">
+        <div>
+          <div class="ex-tag">Grammaire · Conjugaison</div>
+          <h2 class="ex-title">${data.title}</h2>
+          <p class="ex-subtitle">${data.verb} — ${data.verbFr}</p>
+        </div>
+      </div>
+
+      <div class="notes-box">
+        <div class="note-title">Règle</div>
+        ${data.note}
+      </div>
+
+      <div class="error-box">${data.warning}</div>
+
+      <div style="overflow-x:auto; margin-bottom:32px;">
+        <table class="conj-table-ex">
+          <thead><tr>
+            <th>Pronom</th>
+            <th>Français</th>
+            <th style="direction:rtl; text-align:right;">Hébreu</th>
+            <th>Phonétique</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+
+      <div class="divider"></div>
+      <h3 style="margin-bottom:20px; font-size:1.1rem;">Mini-quiz</h3>
+      <div id="conjQuiz"></div>
+    </div>
+  `;
+}
+
+function initConjQuiz() {
+  const data = CONJUGATION_DATA['day' + state.currentDay];
+  conjState = { quiz: data.quiz, current: 0, correct: 0, answered: false };
+  showConjQuestion();
+}
+
+function showConjQuestion() {
+  const { quiz, current } = conjState;
+  if (current >= quiz.length) {
+    endConjQuiz();
+    return;
+  }
+  const q = quiz[current];
+  const opts = q.choices.map(c => `
+    <button class="btn btn-secondary" style="padding:12px 16px; text-align:right; direction:rtl; font-family:'Noto Sans Hebrew',sans-serif; font-size:1rem;"
+      onclick="answerConj(this, '${c}', '${q.answer}')">${c}</button>
+  `).join('');
+
+  document.getElementById('conjQuiz').innerHTML = `
+    <div style="margin-bottom:20px;">
+      <div style="font-weight:600; margin-bottom:14px; font-size:1rem;">${current+1}/${quiz.length} — ${q.prompt}</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;" id="conjOpts">${opts}</div>
+      <div class="correction-box" id="conjFb"></div>
+    </div>
+  `;
+}
+
+function answerConj(btn, chosen, correct) {
+  if (conjState.answered) return;
+  conjState.answered = true;
+
+  const allBtns = document.querySelectorAll('#conjOpts button');
+  allBtns.forEach(b => { b.disabled = true; b.style.cursor = 'not-allowed'; });
+
+  const fb = document.getElementById('conjFb');
+  fb.classList.add('show');
+
+  if (chosen === correct) {
+    btn.style.borderColor = 'var(--correct)';
+    btn.style.color = 'var(--correct)';
+    btn.style.background = 'rgba(42,107,74,0.1)';
+    fb.innerHTML = '<span style="color:var(--correct)">✓ Correct !</span>';
+    conjState.correct++;
+  } else {
+    btn.style.borderColor = 'var(--wrong)';
+    btn.style.color = 'var(--wrong)';
+    fb.innerHTML = `<span style="color:var(--wrong)">✗</span> La bonne réponse : <strong style="font-family:'Noto Sans Hebrew'; direction:rtl; font-size:1.1rem;">${correct}</strong>`;
+  }
+
+  setTimeout(() => {
+    conjState.current++;
+    conjState.answered = false;
+    showConjQuestion();
+  }, 1500);
+}
+
+function endConjQuiz() {
+  const pct = Math.round(conjState.correct / conjState.quiz.length * 100);
+  document.getElementById('conjQuiz').innerHTML = `
+    <div style="text-align:center; padding:32px; background:var(--white); border:1px solid var(--line); border-radius:10px;">
+      <div style="font-size:2rem; margin-bottom:8px;">${pct>=75?'🎯':'📚'}</div>
+      <div style="font-size:1.3rem; font-weight:600; margin-bottom:6px;">${conjState.correct}/${conjState.quiz.length} correct</div>
+      <div style="color:var(--muted); margin-bottom:20px;">${pct}%</div>
+      <button class="btn btn-next" onclick="nextExercise(${pct})">Exercice suivant →</button>
+    </div>
+  `;
+}
+
+// ============================================================
+// FILL BLANKS
+// ============================================================
+let fillState = { sentences:[], answers:[], checked: false };
+
+function buildFillBlanks(dayIdx) {
+  const data = FILL_DATA['day' + dayIdx];
+  const ex = DAYS[dayIdx].exercises[2];
+  const items = data.sentences.map((s, i) => `
+    <div class="translation-block">
+      <div style="font-size:0.75rem; font-family:'IBM Plex Mono',monospace; color:var(--muted); margin-bottom:10px; text-transform:uppercase; letter-spacing:0.1em;">Phrase ${i+1} · <em style="text-transform:none; font-style:italic;">${s.fr}</em></div>
+      <div style="direction:rtl; text-align:right; font-family:'Noto Sans Hebrew',sans-serif; font-size:1.3rem; line-height:2; color:var(--ink); margin-bottom:14px;">
+        ${s.before} <input class="fill-blank-input" id="fi-${i}" data-answer="${s.blank}" placeholder="..." style="min-width:${Math.max(80, s.blank.length*20)}px"> ${s.after}
+      </div>
+      <div style="font-size:0.8rem; color:var(--muted);">💡 ${s.hint}</div>
+      <div class="correction-box" id="fcorr-${i}"></div>
+    </div>
+  `).join('');
+
+  return `
+    <div>
+      <div class="ex-header">
+        <div>
+          <div class="ex-tag">Exercice · Compléter</div>
+          <h2 class="ex-title">${data.title}</h2>
+          <p class="ex-subtitle">Complète chaque phrase avec le mot manquant en hébreu.</p>
+        </div>
+      </div>
+      ${items}
+      <div class="action-row">
+        <button class="btn btn-check" onclick="checkFillBlanks()">Vérifier tout</button>
+      </div>
+    </div>
+  `;
+}
+
+function initFillBlanks() {
+  // Allow Enter to move to next
+  document.querySelectorAll('.fill-blank-input').forEach((inp, i, arr) => {
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && i < arr.length - 1) arr[i+1].focus();
+    });
+  });
+}
+
+function checkFillBlanks() {
+  let correct = 0, total = 0;
+  document.querySelectorAll('.fill-blank-input').forEach((inp, i) => {
+    const answer = inp.dataset.answer;
+    const val = inp.value.trim();
+    const fb = document.getElementById('fcorr-' + i);
+    total++;
+    fb.classList.add('show');
+    if (val === answer) {
+      inp.classList.add('correct');
+      fb.innerHTML = `<span style="color:var(--correct)">✓ Correct : <strong style="font-family:'Noto Sans Hebrew'; direction:rtl;">${answer}</strong></span>`;
+      correct++;
+    } else {
+      inp.classList.add('wrong');
+      fb.innerHTML = `<span style="color:var(--wrong)">✗</span> Réponse attendue : <strong style="font-family:'Noto Sans Hebrew'; direction:rtl; font-size:1.1rem;">${answer}</strong>${val ? ` (tu as écrit : ${val})` : ''}`;
+    }
+  });
+  const pct = Math.round(correct/total*100);
+  document.querySelector('.action-row').innerHTML = `
+    <div style="font-size:1rem; font-weight:600; color:${pct>=80?'var(--correct)':'var(--wrong)'};">${correct}/${total} correct (${pct}%)</div>
+    <button class="btn btn-next" onclick="nextExercise(${pct})">Exercice suivant →</button>
+  `;
+}
+
+// ============================================================
+// READING
+// ============================================================
+function buildReading(dayIdx) {
+  const data = READING_DATA['day' + dayIdx];
+  let html = '';
+  data.text.forEach(tok => {
+    if (tok.w === '\n') { html += '<br>'; return; }
+    if (tok.w === '\n\n') { html += '<br><br>'; return; }
+    if (tok.t) {
+      html += `<span class="word" data-tip="${tok.t}">${tok.w} </span>`;
+    } else {
+      html += tok.w + ' ';
+    }
+  });
+
+  const qs = data.questions.map((q, i) => `
+    <div style="margin-bottom:20px;">
+      <div style="font-weight:600; margin-bottom:8px;">${i+1}. ${q.q}</div>
+      <textarea class="translation-input" rows="2" placeholder="Ta réponse..."></textarea>
+      <button class="btn btn-secondary" style="margin-top:8px;" onclick="revealReadingAnswer(this, '${q.a.replace(/'/g,"\\'")}')">Voir la réponse</button>
+      <div class="correction-box" id="rq-${i}"></div>
+    </div>
+  `).join('');
+
+  return `
+    <div>
+      <div class="ex-header">
+        <div>
+          <div class="ex-tag">Compréhension · Lecture</div>
+          <h2 class="ex-title">${data.title}</h2>
+          <p class="ex-subtitle">${data.subtitle}</p>
+        </div>
+      </div>
+      <div class="reading-text" id="readText">${html}</div>
+      <div class="notes-box">
+        <div class="note-title">Questions de compréhension</div>
+      </div>
+      ${qs}
+      <div class="action-row" style="margin-top:24px;">
+        <button class="btn btn-next" onclick="nextExercise(80)">Exercice suivant →</button>
+      </div>
+    </div>
+  `;
+}
+
+function initReading() {
+  const tooltip = document.getElementById('word-tooltip');
+  document.querySelectorAll('#readText .word').forEach(w => {
+    w.addEventListener('mouseenter', e => {
+      tooltip.textContent = e.target.dataset.tip;
+      tooltip.style.display = 'block';
+    });
+    w.addEventListener('mousemove', e => {
+      tooltip.style.left = (e.clientX + 12) + 'px';
+      tooltip.style.top = (e.clientY - 30) + 'px';
+    });
+    w.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none';
+    });
+  });
+}
+
+function revealReadingAnswer(btn, answer) {
+  const idx = btn.parentElement.id ? btn.parentElement.id.split('-')[1] : 0;
+  const fb = btn.nextElementSibling;
+  fb.classList.add('show');
+  fb.innerHTML = `<span style="font-weight:600;">Réponse :</span> ${answer}`;
+  btn.style.display = 'none';
+}
+
+// ============================================================
+// TRANSLATION
+// ============================================================
+let transState = { pairs:[], current:0, correct:0, revealed:[] };
+
+function buildTranslation(dayIdx) {
+  const data = TRANSLATION_DATA['day' + dayIdx];
+  const isHeb = data.direction === 'heb2fr';
+
+  const items = data.pairs.map((p, i) => {
+    const isHebSrc = data.direction === 'heb2fr' || (data.direction === 'mixed' && i % 2 === 1);
+    return `
+      <div class="translation-block">
+        <div class="ex-tag" style="margin-bottom:12px; font-size:0.65rem;">${isHebSrc ? 'HEB → FR' : 'FR → HEB'}</div>
+        <div class="source-text ${isHebSrc ? 'rtl' : ''}">${p.src}</div>
+        <textarea class="translation-input ${isHebSrc ? '' : 'heb-input'}" rows="2" placeholder="${isHebSrc ? 'Ta traduction en français...' : 'תרגום שלך בעברית...'}" id="tr-${i}"></textarea>
+        <div class="action-row">
+          <button class="btn btn-reveal" onclick="revealTrans(${i}, '${p.target.replace(/'/g,"\\'")}', '${(p.note||'').replace(/'/g,"\\'")}')">Révéler</button>
+        </div>
+        <div class="correction-box" id="tfb-${i}">
+          <div class="corr-label">Traduction attendue</div>
+          <div class="corr-text" style="${isHebSrc ? '' : 'direction:rtl; font-family:\'Noto Sans Hebrew\',sans-serif; font-size:1.1rem; text-align:right;'}">${p.target}</div>
+          ${p.note ? `<div class="corr-note">💡 ${p.note}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div>
+      <div class="ex-header">
+        <div>
+          <div class="ex-tag">Traduction</div>
+          <h2 class="ex-title">${data.title}</h2>
+          <p class="ex-subtitle">Traduis chaque phrase. Vérifie honnêtement ta réponse avant de révéler.</p>
+        </div>
+      </div>
+      ${items}
+      <div class="action-row" style="margin-top:24px;">
+        <button class="btn btn-next" onclick="nextExercise(80)">Terminer →</button>
+      </div>
+    </div>
+  `;
+}
+
+function initTranslation() {}
+
+function revealTrans(i, target, note) {
+  const fb = document.getElementById('tfb-' + i);
+  fb.classList.add('show');
+  const btn = fb.previousElementSibling.querySelector('.btn-reveal');
+  if (btn) btn.style.display = 'none';
+}
+
+// ============================================================
+// SUMMARY
+// ============================================================
+function buildSummary() {
+  const dayIdx = state.currentDay;
+  const scores = Object.values(state.exScores);
+  const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+  const vocabCount = Object.keys(state.vocab).length;
+
+  const wordsLearned = VOCAB['day'+dayIdx] ? VOCAB['day'+dayIdx].map(v => `<span class="word-chip">${v.heb} — ${v.fr}</span>`).join('') : '';
+
+  // Save day results
+  state.days[dayIdx] = { completed: true, score: avg, time: state.sessionSeconds };
+  saveState();
+  clearInterval(state.sessionTimer);
+  document.getElementById('globalTimer').classList.remove('running');
+  buildDayDots();
+
+  const sessionMin = Math.floor(state.sessionSeconds / 60);
+
+  return `
+    <div class="completion-screen">
+      <div class="completion-score">
+        <div class="cs-num">${avg}</div>
+        <div class="cs-max">%</div>
+      </div>
+      <h2 class="cs-title">Session terminée ! ${avg>=80?'🎯':avg>=60?'👍':'💪'}</h2>
+      <p class="cs-sub">Jour ${dayIdx+1} validé · ${sessionMin} minutes de travail</p>
+
+      <div class="session-breakdown">
+        <div class="sb-item">
+          <div class="sbi-label">Flashcards</div>
+          <div class="sbi-val ${state.exScores[0]>=80?'good':'avg'}">${state.exScores[0]||0}%</div>
+        </div>
+        <div class="sb-item">
+          <div class="sbi-label">Conjugaison</div>
+          <div class="sbi-val ${state.exScores[1]>=80?'good':'avg'}">${state.exScores[1]||0}%</div>
+        </div>
+        <div class="sb-item">
+          <div class="sbi-label">Blancs</div>
+          <div class="sbi-val ${state.exScores[2]>=80?'good':'avg'}">${state.exScores[2]||0}%</div>
+        </div>
+        <div class="sb-item">
+          <div class="sbi-label">Lecture</div>
+          <div class="sbi-val ${state.exScores[3]>=80?'good':'avg'}">${state.exScores[3]||0}%</div>
+        </div>
+        <div class="sb-item">
+          <div class="sbi-label">Traduction</div>
+          <div class="sbi-val ${state.exScores[4]>=80?'good':'avg'}">${state.exScores[4]||0}%</div>
+        </div>
+        <div class="sb-item">
+          <div class="sbi-label">Score final</div>
+          <div class="sbi-val ${avg>=80?'good':'avg'}">${avg}%</div>
+        </div>
+      </div>
+
+      <div class="error-review">
+        <div class="er-title">Mots travaillés aujourd'hui</div>
+        <div style="display:flex; flex-wrap:wrap; gap:8px;">${wordsLearned}</div>
+      </div>
+
+      <div class="action-row" style="justify-content:center; gap:16px;">
+        <button class="btn btn-secondary" onclick="showView('home')">← Retour au programme</button>
+        <button class="btn btn-primary" onclick="showView('stats')">Voir les stats →</button>
+      </div>
+    </div>
+  `;
+}
+
+// ============================================================
+// STATS
+// ============================================================
+function renderStats() {
+  const now = new Date();
+  document.getElementById('statsWeekLabel').textContent =
+    `Semaine du ${now.toLocaleDateString('fr-FR', {day:'numeric',month:'long',year:'numeric'})}`;
+
+  // Score chart
+  const chart = document.getElementById('scoreChart');
+  chart.innerHTML = '';
+  const maxScore = 100;
+
+  DAYS.forEach((day, i) => {
+    const s = state.days[i];
+    const score = s?.score || 0;
+    const pct = score / maxScore * 100;
+    const color = score >= 80 ? 'var(--correct)' : score >= 60 ? 'var(--gold)' : score > 0 ? 'var(--wrong)' : 'var(--line)';
+
+    chart.innerHTML += `
+      <div class="bar-col">
+        <div class="bar-val">${score > 0 ? score+'%' : '—'}</div>
+        <div class="bar-fill" style="height:${Math.max(4,pct*1.2)}px; background:${color};"></div>
+        <div class="bar-label">J${i+1}</div>
+      </div>
+    `;
+  });
+
+  // Skills grid
+  const skillGrid = document.getElementById('skillGrid');
+  skillGrid.innerHTML = '';
+  const skills = ['Vocabulaire', 'Conjugaison', 'Complétion', 'Lecture', 'Traduction'];
+  const exIdxMap = [0, 1, 2, 3, 4];
+
+  skills.forEach((skill, si) => {
+    const scores = Object.values(state.days).filter(d => d.completed).map(d => 85); // simplified
+    const avg = Object.values(state.days).filter(d=>d.completed).length > 0 ? 75 : 0;
+    const cls = avg>=80?'good':avg>=60?'mid':avg>0?'bad':'mid';
+    const barColor = cls==='good'?'var(--correct)':cls==='mid'?'var(--gold)':'var(--wrong)';
+
+    skillGrid.innerHTML += `
+      <div class="perf-item">
+        <div class="pi-skill">${skill}</div>
+        <div class="pi-score ${cls}">${avg>0?avg+'%':'—'}</div>
+        <div class="pi-bar"><div class="pi-bar-fill" style="width:${avg}%; background:${barColor};"></div></div>
+      </div>
+    `;
+  });
+
+  // Words cloud
+  const mastered = Object.entries(state.vocab)
+    .filter(([w, d]) => d.known >= 2 && d.unknown === 0)
+    .map(([w, d]) => `<span class="word-chip">${w} — ${d.fr}</span>`)
+    .join('');
+
+  const struggling = Object.entries(state.vocab)
+    .filter(([w, d]) => d.unknown > d.known)
+    .map(([w, d]) => `<span class="word-chip struggling">${w} — ${d.fr}</span>`)
+    .join('');
+
+  document.getElementById('wordsCloud').innerHTML = mastered || '<em style="color:var(--muted)">Pas encore de mots maîtrisés cette semaine.</em>';
+  document.getElementById('strugglingCloud').innerHTML = struggling || '<em style="color:var(--muted)">Aucun mot particulièrement difficile — continue !</em>';
+}
+</script>
+</body>
+</html>
