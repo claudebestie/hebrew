@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>עברית — Intensif B1</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@300;400;500&family=Noto+Sans+Hebrew:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0f0f0f;--paper:#F0EBE1;--paper2:#E6DFD3;--line:#D2C9BA;--accent:#1C3F6E;--red:#A33020;--gold:#B8871E;--green:#285C42;--muted:#7A7060;--white:#FDFAF4;--ok:#285C42;--ko:#A33020;--warn:#B8871E;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Libre Baskerville',Georgia,serif;background:var(--paper);color:var(--ink);font-size:15px;line-height:1.7}
+/* BAR */
+.bar{position:fixed;top:0;left:0;right:0;z-index:300;background:var(--ink);height:50px;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
+.logo{font-family:'Noto Sans Hebrew',sans-serif;font-size:1.15rem;font-weight:700;color:var(--paper)}
+.logo em{color:var(--gold);font-style:normal}
+.nav{display:flex;gap:2px}
+.nb{background:none;border:none;color:#666;font-family:'Libre Baskerville',serif;font-size:.78rem;padding:6px 13px;border-radius:3px;cursor:pointer;transition:all .2s}
+.nb:hover{color:var(--paper)}
+.nb.on{color:var(--paper);background:rgba(255,255,255,.12)}
+.bar-r{display:flex;align-items:center;gap:10px}
+.tmr{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--gold);background:#181818;border:1px solid #2a2a14;padding:3px 11px;border-radius:20px;min-width:52px;text-align:center}
+.dots{display:flex;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;background:#222}
+.dot.done{background:var(--gold)}
+.dot.now{background:var(--red);box-shadow:0 0 5px var(--red)}
+/* VIEWS */
+.view{display:none;padding-top:50px;min-height:100vh}
+.view.on{display:block}
+/* HOME */
+.hw{max-width:900px;margin:0 auto;padding:52px 36px}
+h1.ht{font-size:2.6rem;font-weight:700;line-height:1.1;margin-bottom:8px}
+h1.ht em{font-style:italic;color:var(--accent)}
+.hsub{color:var(--muted);font-style:italic;font-size:.9rem;margin-bottom:44px}
+.wg{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px}
+.dc{background:var(--white);border:1px solid var(--line);border-radius:8px;padding:16px 13px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;border-top:3px solid var(--line)}
+.dc.done{border-top-color:var(--gold)}
+.dc.now{border-top-color:var(--red)}
+.dc:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.dc-d{font-family:'IBM Plex Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px}
+.dc-t{font-size:.88rem;font-weight:700;line-height:1.3;margin-bottom:3px}
+.dc-f{font-size:.72rem;color:var(--muted);font-style:italic}
+.dc-s{margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:.8rem}
+.dc-b{position:absolute;top:9px;right:10px;font-size:.85rem}
+.srow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:32px}
+.sc{background:var(--ink);color:var(--paper);border-radius:8px;padding:18px 16px}
+.sc-n{font-family:'IBM Plex Mono',monospace;font-size:1.9rem;color:var(--gold);line-height:1;margin-bottom:3px}
+.sc-l{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#666}
+.gbtn{display:inline-flex;align-items:center;gap:10px;background:var(--red);color:#fff;border:none;padding:13px 30px;font-family:'Libre Baskerville',serif;font-size:.98rem;font-weight:700;border-radius:6px;cursor:pointer;transition:all .2s}
+.gbtn:hover{background:#8a2418;transform:translateY(-1px)}
+/* SESSION */
+.sl{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 50px)}
+.sb{background:#0d0d0d;padding:24px 0;position:sticky;top:50px;height:calc(100vh - 50px);overflow-y:auto;display:flex;flex-direction:column;border-right:1px solid #1a1a1a}
+.sb-dt{padding:0 16px 18px;font-family:'IBM Plex Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.12em;color:#3a3a3a}
+.ei{display:flex;align-items:center;gap:8px;padding:8px 16px;cursor:pointer;color:#4a4a4a;font-size:.78rem;transition:all .15s;border-left:2px solid transparent}
+.ei:hover{color:#888}
+.ei.on{color:var(--paper);border-left-color:var(--red);background:rgba(255,255,255,.05)}
+.ei.ok{color:var(--gold)}
+.ei-ic{font-size:.8rem;width:16px;text-align:center;flex-shrink:0}
+.ei-t{font-family:'IBM Plex Mono',monospace;margin-left:auto;font-size:.62rem;color:#2a2a2a}
+.ei.ok .ei-t{color:#6a5a00}
+.pb-wrap{padding:14px 16px;border-top:1px solid #1a1a1a;margin-top:auto}
+.pb-row{display:flex;justify-content:space-between;font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:#3a3a3a;margin-bottom:5px}
+.pb-bar{height:2px;background:#1a1a1a;border-radius:1px}
+.pb-fill{height:100%;background:var(--gold);border-radius:1px;transition:width .4s}
+/* EA */
+.ea{padding:44px 60px;background:var(--paper);max-width:960px}
+.tag{display:inline-block;background:var(--ink);color:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.12em;padding:3px 10px;border-radius:3px;margin-bottom:10px}
+.etitle{font-size:1.75rem;font-weight:700;line-height:1.2;margin-bottom:5px}
+.esub{color:var(--muted);font-style:italic;font-size:.88rem;margin-bottom:28px}
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--line);border-radius:9px;padding:22px 26px;margin-bottom:16px}
+.clbl{font-family:'IBM Plex Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px}
+/* HEB */
+.heb{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl}
+/* LESSON */
+.lb{margin-bottom:24px}
+.lb-t{font-size:.98rem;font-weight:700;margin-bottom:11px;padding-bottom:8px;border-bottom:2px solid var(--ink)}
+.lb-body{font-size:.88rem;line-height:1.85}
+.lb-body p{margin-bottom:9px}
+.rule{background:rgba(28,63,110,.07);border:1px solid rgba(28,63,110,.18);border-radius:7px;padding:14px 18px;margin:10px 0}
+.rule-t{font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:10px}
+.egrid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+.ecell{background:var(--paper2);border-radius:5px;padding:10px 12px}
+.ecell .eh{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;text-align:right;font-size:1.08rem;color:var(--accent);display:block;font-weight:600;margin-bottom:2px}
+.ecell .ep{font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:#999;display:block}
+.ecell .ef{color:var(--muted);font-style:italic;font-size:.8rem;display:block;margin-top:2px}
+.warn{background:rgba(163,48,32,.07);border-left:3px solid var(--red);border-radius:0 5px 5px 0;padding:11px 14px;margin:10px 0;font-size:.86rem;line-height:1.75}
+.warn strong{color:var(--red)}
+.note{background:rgba(184,135,30,.08);border-left:3px solid var(--gold);border-radius:0 5px 5px 0;padding:11px 14px;margin:10px 0;font-size:.86rem;line-height:1.75}
+/* TABLE */
+.t{width:100%;border-collapse:collapse;font-size:.86rem;margin:10px 0 16px}
+.t th{background:var(--ink);color:var(--paper);padding:8px 12px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;font-weight:400}
+.t td{padding:8px 12px;border-bottom:1px solid var(--line)}
+.t .th{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;text-align:right;font-size:1.08rem;color:var(--accent);font-weight:600}
+.t tr:hover td{background:rgba(0,0,0,.015)}
+/* QUIZ */
+.qp{font-size:.98rem;font-weight:700;margin-bottom:12px;line-height:1.5}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.opt{padding:11px 14px;border:2px solid var(--line);border-radius:7px;background:var(--white);font-family:'Libre Baskerville',serif;font-size:.88rem;cursor:pointer;transition:all .15s;text-align:left;color:var(--ink);line-height:1.4}
+.opt:hover:not(:disabled){border-color:var(--accent);background:rgba(28,63,110,.05)}
+.opt.correct{border-color:var(--ok);background:rgba(40,92,66,.1);color:var(--ok);font-weight:700}
+.opt.wrong{border-color:var(--ko);background:rgba(163,48,32,.07);color:var(--ko)}
+.opt:disabled{cursor:not-allowed}
+.qfb{margin-top:8px;padding:11px 14px;border-radius:6px;font-size:.84rem;display:none;line-height:1.65}
+.qfb.show{display:block}
+.qfb.ok{background:rgba(40,92,66,.09);border:1px solid rgba(40,92,66,.22);color:var(--ok)}
+.qfb.ko{background:rgba(163,48,32,.07);border:1px solid rgba(163,48,32,.18);color:var(--ko)}
+.qfb .expl{margin-top:7px;color:var(--ink);font-size:.82rem;border-top:1px solid rgba(0,0,0,.07);padding-top:7px}
+/* READING */
+.rblock{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;text-align:right;font-size:1.1rem;line-height:2.6;background:var(--white);border:1px solid var(--line);border-radius:9px;padding:26px 30px;margin-bottom:18px}
+.rw{cursor:pointer;border-radius:2px;transition:background .1s;padding:0 1px}
+.rw:hover{background:rgba(28,63,110,.12)}
+.tip{position:fixed;background:var(--ink);color:var(--paper);padding:6px 12px;border-radius:5px;font-size:.76rem;font-family:'Libre Baskerville',serif;pointer-events:none;z-index:999;display:none;max-width:240px;line-height:1.5;box-shadow:0 5px 18px rgba(0,0,0,.3)}
+/* TRANSLATION */
+.tsrc{font-size:.98rem;line-height:1.9;padding:14px 18px;background:var(--paper2);border-radius:7px;border:1px solid var(--line);margin-bottom:12px}
+.tsrc.rtl{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;text-align:right;font-size:1.15rem;color:var(--accent);line-height:2.3;font-weight:600}
+.tinput{width:100%;min-height:80px;padding:12px 14px;border:2px solid var(--line);border-radius:7px;font-family:'Libre Baskerville',serif;font-size:.93rem;background:var(--paper);color:var(--ink);resize:vertical;outline:none;transition:border-color .2s;line-height:1.7}
+.tinput.hi{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;font-size:1.05rem}
+.tinput:focus{border-color:var(--accent)}
+.cbox{background:var(--paper2);border:1px solid var(--line);border-radius:7px;padding:13px 16px;margin-top:8px;display:none}
+.cbox.show{display:block}
+.clb{font-family:'IBM Plex Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:7px}
+.epanel{margin-top:8px;padding:13px 16px;background:rgba(163,48,32,.06);border:1px solid rgba(163,48,32,.16);border-radius:6px;display:none}
+.epanel.show{display:block}
+.ep-t{font-weight:700;color:var(--red);font-size:.76rem;text-transform:uppercase;letter-spacing:.08em;margin-bottom:9px}
+.erri{margin-bottom:9px;padding-bottom:9px;border-bottom:1px solid rgba(163,48,32,.1);font-size:.84rem;line-height:1.7}
+.erri:last-child{border:none;margin-bottom:0;padding-bottom:0}
+.ew{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;color:var(--ko);font-size:.98rem;font-weight:600}
+.er{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;color:var(--ok);font-size:.98rem;font-weight:600}
+/* FILL */
+.fbsent{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;text-align:right;font-size:1.15rem;line-height:3;margin-bottom:6px}
+input.blank{border:none;border-bottom:2px solid var(--accent);background:transparent;font-family:'Noto Sans Hebrew',sans-serif;font-size:1.1rem;color:var(--accent);direction:rtl;text-align:center;outline:none;padding:0 5px;min-width:100px;transition:border-color .2s}
+input.blank:focus{border-color:var(--gold)}
+input.blank.ok{border-color:var(--ok);color:var(--ok)}
+input.blank.ko{border-color:var(--ko);color:var(--ko)}
+/* AUDIO */
+.arow{display:flex;align-items:center;gap:9px;margin-bottom:10px;flex-wrap:wrap}
+.pbtn{display:flex;align-items:center;gap:6px;background:var(--accent);color:#fff;border:none;padding:7px 16px;border-radius:5px;font-family:'Libre Baskerville',serif;font-size:.82rem;cursor:pointer;transition:all .15s}
+.pbtn:hover{background:#142d50}
+.pbtn.playing{background:var(--red)}
+.spd{background:none;border:1px solid var(--line);border-radius:3px;padding:4px 9px;font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--muted);cursor:pointer;transition:all .15s}
+.spd:hover,.spd.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+/* FLASH */
+.fc{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:36px;text-align:center;margin-bottom:16px;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.fc:hover{box-shadow:0 8px 24px rgba(0,0,0,.07)}
+.fc-h{font-family:'Noto Sans Hebrew',sans-serif;font-size:2.8rem;color:var(--accent);direction:rtl;line-height:1.4;margin-bottom:7px;font-weight:700}
+.fc-n{font-size:.75rem;color:var(--muted);font-style:italic}
+.fcr{display:none}
+.fcr.show{display:block;animation:fu .2s}
+.fc-fr{font-size:1.15rem;font-weight:700;margin-bottom:3px}
+.fc-ph{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--muted);margin-bottom:9px}
+.fc-ex{padding:9px 12px;background:var(--paper2);border-radius:5px;font-size:.84rem}
+.fc-exh{font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;text-align:right;font-size:.98rem;color:var(--accent);display:block;margin-bottom:2px}
+.fc-exf{color:var(--muted);font-style:italic;font-size:.78rem;display:block}
+.fc-nt{margin-top:8px;padding:8px 11px;background:rgba(184,135,30,.08);border:1px solid rgba(184,135,30,.18);border-radius:4px;font-size:.78rem;text-align:left}
+.fca{display:flex;gap:9px;justify-content:center;margin-top:12px}
+.fa{padding:9px 24px;border-radius:6px;border:2px solid;font-family:'Libre Baskerville',serif;font-size:.86rem;font-weight:700;cursor:pointer;transition:all .15s}
+.fa-k{border-color:var(--ok);color:var(--ok)}
+.fa-k:hover{background:var(--ok);color:#fff}
+.fa-u{border-color:var(--ko);color:var(--ko)}
+.fa-u:hover{background:var(--ko);color:#fff}
+.fprog{font-family:'IBM Plex Mono',monospace;font-size:.73rem;color:var(--muted);text-align:center;margin-bottom:14px}
+/* BTNS */
+.btn{padding:9px 20px;border-radius:6px;font-family:'Libre Baskerville',serif;font-size:.86rem;font-weight:700;cursor:pointer;border:none;transition:all .15s}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn-ink:hover{background:var(--accent)}
+.btn-red{background:var(--red);color:#fff}
+.btn-red:hover{background:#8a2418}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:#9a7018}
+.btn-ghost{background:var(--paper2);color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{background:var(--line)}
+.arow2{display:flex;gap:9px;margin-top:18px;align-items:center;flex-wrap:wrap}
+.div{height:1px;background:var(--line);margin:22px 0}
+/* SUMMARY */
+.cw{max-width:660px;margin:0 auto;text-align:center;padding:52px 38px}
+.cring{width:126px;height:126px;border-radius:50%;background:var(--ink);margin:0 auto 26px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gold);font-family:'IBM Plex Mono',monospace;box-shadow:0 0 0 8px rgba(184,135,30,.1)}
+.cn{font-size:2.5rem;line-height:1}
+.cs{font-size:.7rem;color:#555}
+.ctit{font-size:1.65rem;font-weight:700;margin-bottom:5px}
+.csub{color:var(--muted);font-style:italic;margin-bottom:30px;font-size:.88rem}
+.bkd{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:22px;text-align:left}
+.bki{background:var(--white);border:1px solid var(--line);border-radius:7px;padding:12px}
+.bki-l{font-family:'IBM Plex Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:4px}
+.bki-v{font-family:'IBM Plex Mono',monospace;font-size:1.25rem;font-weight:500}
+.bki-v.g{color:var(--ok)}
+.bki-v.b{color:var(--warn)}
+.bki-v.r{color:var(--ko)}
+.esum{text-align:left;background:var(--white);border:1px solid var(--line);border-radius:9px;padding:20px;margin-bottom:20px}
+.esum-t{font-family:'IBM Plex Mono',monospace;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:12px}
+.esi{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--line);font-size:.85rem;line-height:1.6}
+.esi:last-child{border:none;margin-bottom:0;padding-bottom:0}
+.esi-tag{flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:.62rem;background:rgba(163,48,32,.1);border:1px solid rgba(163,48,32,.18);color:var(--ko);padding:2px 6px;border-radius:3px}
+/* STATS */
+.stw{max-width:860px;margin:0 auto;padding:52px 36px}
+.chwrap{background:var(--white);border:1px solid var(--line);border-radius:9px;padding:26px;margin-bottom:18px}
+.cht{font-size:.93rem;font-weight:700;margin-bottom:20px}
+.bars{display:flex;align-items:flex-end;gap:9px;height:120px}
+.bc{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.bf{width:100%;border-radius:3px 3px 0 0;min-height:3px;transition:height .7s}
+.bv{font-family:'IBM Plex Mono',monospace;font-size:.62rem}
+.bl{font-family:'IBM Plex Mono',monospace;font-size:.62rem;color:var(--muted)}
+.ww{display:flex;flex-wrap:wrap;gap:6px}
+.wc{background:var(--paper2);border:1px solid var(--line);border-radius:20px;padding:3px 11px;font-family:'Noto Sans Hebrew',sans-serif;direction:rtl;font-size:.88rem;color:var(--accent)}
+.wc.bad{background:rgba(163,48,32,.08);border-color:rgba(163,48,32,.22);color:var(--ko)}
+@keyframes fu{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:2px}
+@media(max-width:720px){.sl{grid-template-columns:1fr}.sb{display:none}.ea{padding:18px 14px}.wg{grid-template-columns:repeat(3,1fr)}.srow{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="logo">עב<em>ר</em>ית — B1 Intensif</div>
+  <div class="nav">
+    <button class="nb on" onclick="gv('h')" id="nb-h">Programme</button>
+    <button class="nb" onclick="gv('s')" id="nb-s">Session</button>
+    <button class="nb" onclick="gv('st')" id="nb-st">Stats</button>
+  </div>
+  <div class="bar-r">
+    <div class="dots" id="dts"></div>
+    <div class="tmr" id="tmr">—</div>
+  </div>
+</div>
+<div id="tip" class="tip"></div>
+
+<!-- HOME -->
+<div class="view on" id="vh">
+<div class="hw">
+  <h1 class="ht">Programme <em>hébreu</em><br>1 heure par jour — Niveau B1</h1>
+  <p class="hsub">Textes 200+ mots · 10 traductions longues · Quiz voc + grammaire + conjugaison · Audio difficile</p>
+  <div class="wg" id="wg"></div>
+  <div class="srow">
+    <div class="sc"><div class="sc-n" id="s0">0</div><div class="sc-l">Sessions</div></div>
+    <div class="sc"><div class="sc-n" id="s1">0</div><div class="sc-l">Mots vus</div></div>
+    <div class="sc"><div class="sc-n" id="s2">—</div><div class="sc-l">Moy. score</div></div>
+    <div class="sc"><div class="sc-n" id="s3">0</div><div class="sc-l">Erreurs notées</div></div>
+  </div>
+  <button class="gbtn" onclick="startToday()">Commencer la session du jour <span style="font-size:1.1rem">→</span></button>
+</div>
+</div>
+
+<!-- SESSION -->
+<div class="view" id="vs">
+<div class="sl">
+  <div class="sb">
+    <div class="sb-dt" id="sb-dt">Jour 1</div>
+    <div id="elist"></div>
+    <div class="pb-wrap">
+      <div class="pb-row"><span id="ptxt">0/8</span><span id="ppct">0%</span></div>
+      <div class="pb-bar"><div class="pb-fill" id="pfill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div class="ea" id="ea"></div>
+</div>
+</div>
+
+<!-- STATS -->
+<div class="view" id="vst">
+<div class="stw">
+  <h2 style="font-size:1.9rem;font-weight:700;margin-bottom:5px">Bilan semaine</h2>
+  <p style="color:var(--muted);font-style:italic;font-size:.86rem;margin-bottom:38px" id="st-wk">—</p>
+  <div class="chwrap"><div class="cht">Scores par session</div><div class="bars" id="bch"></div></div>
+  <div class="chwrap"><div class="cht">Mots maîtrisés</div><div class="ww" id="wm"></div></div>
+  <div class="chwrap"><div class="cht">Mots à retravailler</div><div class="ww" id="wr"></div></div>
+</div>
+</div>
+
+<script>
+// ============================================================
+// CURRICULUM DATA
+// ============================================================
+const DMETA=[
+  {title:"Passé & temporalité",focus:"Pa'al passé — gutturales — aspect"},
+  {title:"Commerce & argumentation",focus:"Pi'el — registres — négociation"},
+  {title:"Futur & hypothèse",focus:"Futur Pa'al — אילו/לו/אם"},
+  {title:"Ville & débrouillardise",focus:"Hif'il + Hitpa'el — idiomes"},
+  {title:"Révision & production",focus:"4 binyanim — erreurs types"}
+];
+
+// ============================================================
+// VOCABULARY (10 words/day, harder)
+// ============================================================
+const VOC={
+  0:[
+    {h:"לְהִזָּכֵר",p:"lehizaker",f:"se souvenir de qch",r:"ז-כ-ר",ex:"אני לא מצליחה להיזכר בשם הרחוב",ef:"Je n'arrive pas à me souvenir du nom de la rue",n:"Hitpa'el ≠ לזכור (Pa'al). Hitpa'el = souvenir qui remonte à la surface."},
+    {h:"דַּוְקָא",p:"davka",f:"justement / précisément (ironie)",r:"—",ex:"דווקא עכשיו הוא מתקשר?",ef:"Il appelle justement maintenant ?",n:"Intraduisible — exprime surprise, ironie, insistance ou dépit."},
+    {h:"לְהִסְתַּדֵּר",p:"lehiStader",f:"se débrouiller / s'arranger",r:"ס-ד-ר",ex:"אני תמיד מסתדרת לבד",ef:"Je me débrouille toujours seule",n:"Hitpa'el — mot-clé de la mentalité israélienne (abi, mastul)."},
+    {h:"בְּכָל זֹאת",p:"bekhol zot",f:"néanmoins / quand même",r:"—",ex:"המחיר גבוה, אבל בכל זאת קניתי",ef:"Le prix était élevé, mais j'ai quand même acheté",n:"Locution de concession — registre standard courant."},
+    {h:"עֲדַיִן לֹא",p:"adayin lo",f:"pas encore",r:"—",ex:"עדיין לא קיבלתי תשובה",ef:"Je n'ai pas encore reçu de réponse",n:"≠ כבר לא (ne plus). עדיין = toujours/encore."},
+    {h:"לְהַעֲרִיך",p:"leha'arikh",f:"apprécier / estimer / évaluer",r:"ע-ר-כ",ex:"אני מעריכה מאוד את הסבלנות שלך",ef:"J'apprécie beaucoup ta patience",n:"Hif'il — double sens : évaluer une valeur OU apprécier une qualité."},
+    {h:"לְנַהֵל",p:"lenahel",f:"gérer / diriger / mener",r:"נ-ה-ל",ex:"היא מנהלת חמישה עובדים ושלושה פרויקטים",ef:"Elle gère cinq employés et trois projets",n:"Pi'el — action intensive. מנהל/ת = manager (aussi directeur/trice)."},
+    {h:"כְּבָר",p:"kvar",f:"déjà / maintenant (insistance)",r:"—",ex:"כבר שלחתי את ההצעה שעה אחת לפני",ef:"J'ai déjà envoyé la proposition une heure avant",n:"≠ עוד (encore). כבר + passé = action accomplie et révolue."},
+    {h:"לְהִתְעַכֵּב",p:"lehit'akev",f:"être retardé / traîner",r:"ע-כ-ב",ex:"אני מתעכבת, אבוא בעוד עשרים דקות",ef:"Je suis retardée, j'arrive dans 20 min",n:"Hitpa'el — très courant dans les SMS israéliens !"},
+    {h:"לְהָשִׁיג",p:"lehashig",f:"atteindre / obtenir / réaliser",r:"נ-ש-ג",ex:"הצלחנו להשיג את כל המטרות שהצבנו",ef:"Nous avons réussi à atteindre tous les objectifs qu'on s'était fixés",n:"Hif'il — causatif. לְהַשָּׂגָה = réalisable (adj.)."}
+  ],
+  1:[
+    {h:"לְשַׁכְנֵעַ",p:"leshakhne'a",f:"convaincre / persuader",r:"ש-כ-נ-ע",ex:"ניסיתי לשכנע אותו שלוש פעמים לפחות",ef:"J'ai essayé de le convaincre au moins trois fois",n:"Pi'el — action intense exercée sur autrui."},
+    {h:"עֲסָקָה",p:"iska",f:"deal / transaction / affaire",r:"ע-ס-ק",ex:"סגרנו עסקה טובה מאוד אחרי שלוש שעות של משא ומתן",ef:"Nous avons conclu un très bon deal après 3h de négociation",n:"Féminin — pl: עסקאות. לסגור עסקה = conclure un deal."},
+    {h:"תְּנַאי",p:"tnay",f:"condition / terme",r:"—",ex:"יש לי תנאי אחד לפני שנחתום על ההסכם הזה",ef:"J'ai une condition avant qu'on signe cet accord",n:"Masculin — pl: תנאים. בתנאי ש = à condition que."},
+    {h:"מֵעַבֵּר לָזֶה",p:"me'ever laze",f:"au-delà de ça / de surcroît",r:"—",ex:"מעבר לזה שהמחיר טוב, השירות גם מצוין",ef:"Au-delà du fait que le prix est bon, le service est aussi excellent",n:"Locution argumentative — ajoute un argument supplémentaire."},
+    {h:"לְהַצְדִּיק",p:"lehatsdig",f:"justifier / légitimer / valider",r:"צ-ד-ק",ex:"קשה להצדיק מחיר כל כך גבוה ללקוחות חדשים",ef:"Il est difficile de justifier un prix si élevé aux nouveaux clients",n:"Hif'il de צדק = juste. Rendre juste = justifier."},
+    {h:"מַה פִּתְאוֹם",p:"ma pit'om",f:"pas du tout ! / certainement pas !",r:"—",ex:"מה פתאום שאשלם יותר על אותו שירות!",ef:"Pas question que je paie plus pour le même service !",n:"Interjection de refus fort — très oral. Montre la surprise indignée."},
+    {h:"לְהַעֲבִיר",p:"leha'avir",f:"transmettre / virer (argent) / passer",r:"ע-ב-ר",ex:"אעביר לך את התשלום עד מחר בבוקר לכל המאוחר",ef:"Je te virerai le paiement d'ici demain matin au plus tard",n:"Hif'il de עבר — causatif (faire passer). לְהַעֲבָרָה = virement."},
+    {h:"בְּהֶסְכֵּם",p:"beheskiem",f:"d'accord / d'un commun accord",r:"ס-כ-מ",ex:"קיבלנו את ההחלטה בהסכם מלא של כל הצדדים",ef:"Nous avons pris la décision avec l'accord complet de toutes les parties",n:"Contexte formel — הֶסְכֵּם = accord, contrat."},
+    {h:"לְהִכָּנֵס לְפְּרָטִים",p:"lehikanes lifratim",f:"entrer dans les détails",r:"כ-נ-ס",ex:"בוא ניכנס לפרטים של ההצעה לפני שנחליט",ef:"Entrons dans les détails de la proposition avant de décider",n:"Nif'al de כנס + locution prépositionnelle."},
+    {h:"לְהִתְפַּשֵּׁר",p:"lehitpasher",f:"faire des compromis / s'accommoder",r:"פ-ש-ר",ex:"אנחנו לא מוכנים להתפשר על איכות העבודה",ef:"Nous ne sommes pas prêts à faire des compromis sur la qualité du travail",n:"Hitpa'el ≠ להתמקח. להתפשר = accepter moins / concession mutuelle."}
+  ],
+  2:[
+    {h:"אִילּוּ",p:"ilu",f:"si (hypothèse irréelle PASSÉE)",r:"—",ex:"אילו ידעתי בזמן, הייתי מגיעה הרבה יותר מוקדם",ef:"Si j'avais su à temps, je serais arrivée bien plus tôt",n:"Irréel PASSÉ — toujours suivi du plus-que-parfait hébreu (היה + participe)."},
+    {h:"לוּ",p:"lu",f:"si (hypothèse irréelle PRÉSENTE)",r:"—",ex:"לו היה לי יותר זמן פנוי, הייתי לומדת שעה ביום",ef:"Si j'avais plus de temps libre, j'étudierais une heure par jour",n:"Irréel PRÉSENT ≠ אילו. לו = situation actuelle contraire à la réalité."},
+    {h:"סָפֵק",p:"safek",f:"doute / incertitude",r:"ס-פ-ק",ex:"יש לי ספק רציני אם נצליח לסיים בזמן",ef:"J'ai un doute sérieux sur le fait qu'on réussira à finir à temps",n:"בספק = en doute · ללא ספק = sans aucun doute · ספק ספיקא = doute redoublé."},
+    {h:"בִּינְתַיִּם",p:"bintayim",f:"entretemps / pendant ce temps",r:"—",ex:"בינתיים, בזמן שהיא מחכה לתשובה, היא ממשיכה לעבוד",ef:"Entretemps, pendant qu'elle attend la réponse, elle continue à travailler",n:"Adverbe temporel — très fréquent à l'oral comme à l'écrit."},
+    {h:"לְהַנִּיחַ",p:"lehani'akh",f:"supposer / poser (hypothèse) / laisser",r:"נ-ו-ח",ex:"נניח לרגע שהלקוח מסכים לכל התנאים — מה אז?",ef:"Supposons un instant que le client accepte toutes les conditions — quoi alors ?",n:"Hif'il — double sens : poser une hypothèse OU laisser un objet quelque part."},
+    {h:"חֲבָל שֶׁ",p:"khaval she",f:"dommage que",r:"ח-ב-ל",ex:"חבל שלא הגעת לפגישה, הייתה מאוד חשובה",ef:"Dommage que tu ne sois pas venu à la réunion, elle était très importante",n:"Locution expressive — suivie du passé en hébreu (pas du subjonctif)."},
+    {h:"בְּכָל מִקְרֶה",p:"bekhol mikre",f:"dans tous les cas / quoi qu'il en soit",r:"—",ex:"בכל מקרה, אשלח לך סיכום בכתב עד הערב",ef:"Dans tous les cas, je t'enverrai un résumé écrit d'ici ce soir",n:"Locution très courante — oral et écrit. Clôt ou tempère une argument."},
+    {h:"לְהַסְתָּכֵּן",p:"lehistaken",f:"prendre un risque",r:"ס-כ-נ",ex:"אני לא רוצה להסתכן בלהשקיע כסף בלי בדיקה מקדימה",ef:"Je ne veux pas prendre le risque d'investir de l'argent sans vérification préalable",n:"Hitpa'el de סכן — réflexif. לְסַכֵּן = mettre en danger (Pi'el, actif)."},
+    {h:"לְאַחֵר",p:"le'akher",f:"être en retard / retarder",r:"א-ח-ר",ex:"מצטערת על האיחור, עצרו אותי בפגישה הקודמת",ef:"Désolée pour le retard, on m'a retenue dans la réunion précédente",n:"Pi'el — אִיחוּר = le retard (nom). לְמַהֵר = se dépêcher (antonyme)."},
+    {h:"עֶשְׂרָה לְאֶחָד",p:"asara le'ekhad",f:"dix contre un / nettement probable",r:"—",ex:"עשרה לאחד שיגיעו מאוחר — הם תמיד מאחרים",ef:"Il y a dix contre un qu'ils arriveront en retard — ils sont toujours en retard",n:"Expression idiomatique — exprime une très forte probabilité."}
+  ],
+  3:[
+    {h:"לְהִתְמַקֵּחַ",p:"lehitmake'akh",f:"marchander / négocier âprement",r:"מ-ק-ח",ex:"בשוק הכרמל תמיד מתמקחים, זה חלק מהחוויה",ef:"Au marché Carmel on marchande toujours, ça fait partie de l'expérience",n:"Hitpa'el — spécifique au marchandage. ≠ להתפשר (compromis mutuel)."},
+    {h:"בְּדִיּוּק",p:"bediyuk",f:"exactement / précisément",r:"ד-ו-ק",ex:"בדיוק! זה בדיוק מה שניסיתי לומר כל הזמן",ef:"Exactement ! C'est précisément ce que j'essayais de dire tout ce temps",n:"Adverbe d'insistance — confirme fortement. דַּיָּק = être précis (Pi'el)."},
+    {h:"לְהַסְבִּיר אֶת עַצְמִי",p:"lehasbir et atsmi",f:"m'expliquer / exprimer ma pensée",r:"ס-ב-ר",ex:"תני לי להסביר את עצמי לפני שתסיקי מסקנות",ef:"Laisse-moi m'expliquer avant que tu tires des conclusions",n:"Hif'il réflexif + את עצמי. ≠ הסביר משהו (expliquer quelque chose à quelqu'un)."},
+    {h:"לְהִתְרַשֵּׁם",p:"lehitraShem",f:"être impressionné / recevoir une impression",r:"ר-ש-מ",ex:"התרשמתי מאוד מהאופן שבו הוא מנהל את הצוות שלו",ef:"J'ai été très impressionnée par la façon dont il gère son équipe",n:"Hitpa'el — réflexif passif de רשם (noter/inscrire). הִתְרַשְּׁמוּת = impression."},
+    {h:"כְּלוֹמַר",p:"kloomar",f:"c'est-à-dire / autrement dit",r:"—",ex:"זה יקח שבוע, כלומר, נוכל לסיים עד יום שישי",ef:"Ça prendra une semaine, c'est-à-dire, on pourra finir d'ici vendredi",n:"Conjonction explicative — reformulation ou clarification. Très fréquente."},
+    {h:"לְפַצּוֹת",p:"lefatset",f:"compenser / indemniser",r:"פ-צ-ה",ex:"נפצה אותך על האיחור בהנחה של עשרה אחוז",ef:"Nous te compenserons pour le retard avec une réduction de 10%",n:"Pi'el — פִּיצוּי = compensation, indemnisation (nom)."},
+    {h:"בְּשׁוּם אוֹפֶן לֹא",p:"beshum ofen lo",f:"en aucun cas / absolument pas",r:"—",ex:"בשום אופן לא נסכים להוריד את המחיר מתחת לרף הזה",ef:"En aucun cas nous n'accepterons de baisser le prix sous ce seuil",n:"Locution de négation absolue — très fort. Registre formel ou emphase orale."},
+    {h:"לְהַסְתַּדֵּר עִם",p:"lehiStader im",f:"s'arranger avec / composer avec",r:"ס-ד-ר",ex:"אי אפשר להסתדר עם לקוח כזה לאורך זמן",ef:"On ne peut pas s'arranger avec un tel client sur le long terme",n:"Hitpa'el + im — nuance : tolérer / trouver un modus vivendi."},
+    {h:"לִגְמוֹר אֶת הַסִּפּוּר",p:"ligmor et hasippur",f:"en finir / clore le dossier",r:"ג-מ-ר",ex:"בואי נגמור את הסיפור הזה היום ונעבור הלאה",ef:"Finissons-en avec ça aujourd'hui et passons à autre chose",n:"Expression idiomatique — lit. 'finir l'histoire'. Registre courant."},
+    {h:"לְפִי הַנִּסָּיוֹן שֶׁלִּי",p:"lefi hanisayon sheli",f:"d'après mon expérience",r:"—",ex:"לפי הניסיון שלי, לקוחות שמתמקחים מראש לא שווים את הזמן",ef:"D'après mon expérience, les clients qui marchandent d'entrée ne valent pas le temps",n:"Locution argumentative — utile pour introduire une opinion fondée."}
+  ],
+  4:[
+    {h:"בְּמִסְגֶּרֶת",p:"bemisgheret",f:"dans le cadre de",r:"ס-ג-ר",ex:"במסגרת ההסכם, נספק עדכונים חודשיים על ההתקדמות",ef:"Dans le cadre de l'accord, nous fournirons des mises à jour mensuelles sur les progrès",n:"Préposition complexe — registre formel. מִסְגֶּרֶת = cadre, encadrement."},
+    {h:"לַכְלוֹל",p:"likhlol",f:"inclure / intégrer",r:"כ-ל-ל",ex:"המחיר כולל בניית אתר, עיצוב ושלושה חודשי תמיכה מלאה",ef:"Le prix inclut la construction du site, le design et trois mois de support complet",n:"Pa'al — très courant dans les propositions commerciales et contrats."},
+    {h:"לְהִסְתַּפֵּק בְּ",p:"lehistapek be",f:"se contenter de / se satisfaire de",r:"ס-פ-ק",ex:"אי אפשר להסתפק בפחות כשמדובר באיכות השירות",ef:"On ne peut pas se contenter de moins quand il s'agit de qualité de service",n:"Hitpa'el — réflexif. ≠ לְסַפֵּק (fournir, Pi'el actif)."},
+    {h:"כְּלוֹמַר",p:"kloomar",f:"c'est-à-dire",r:"—",ex:"כלומר, המחיר הסופי יהיה תלוי בהיקף הפרויקט",ef:"C'est-à-dire que le prix final dépendra de l'étendue du projet",n:"Voit Jour 3 — même mot, contexte différent."},
+    {h:"לְהָבִיא לִידֵי בִּיטּוּי",p:"lehaviʾ liydey bituy",f:"exprimer / donner expression à",r:"ב-ט-י",ex:"הפרויקט הזה מביא לידי ביטוי את כל הכישרון של הצוות",ef:"Ce projet donne expression à tout le talent de l'équipe",n:"Locution formelle — très courante dans le discours professionnel israélien."},
+    {h:"לְהִתְרַשֵּׁם מִ",p:"lehitraShem mi",f:"être impressionné par",r:"ר-ש-מ",ex:"התרשמתי מאוד מהמצגת שהכנת, הייתה מאוד מקצועית",ef:"J'ai été très impressionnée par la présentation que tu as préparée, elle était très professionnelle",n:"Hitpa'el + מ = la source de l'impression."},
+    {h:"בַּעַל פֶּה",p:"ba'al pe",f:"par cœur (oralement)",r:"—",ex:"למדתי את כל הטבלאות בעל פה עד שהן נהיו טבע שני",ef:"J'ai appris tous les tableaux par cœur jusqu'à ce qu'ils deviennent une seconde nature",n:"Locution figée — lit. 'maître de la bouche'. ≠ בכתב (par écrit)."},
+    {h:"לְהַמְשִׁיך בְּאוֹתוֹ כִּיוּן",p:"lehamshikh be'oto kivun",f:"continuer dans la même direction",r:"כ-ו-נ",ex:"אם נמשיך באותו כיוון, נגיע למטרות שלנו בסוף השנה",ef:"Si nous continuons dans la même direction, nous atteindrons nos objectifs fin d'année",n:"Hif'il de המשיך + locution directionnelle."},
+    {h:"לִהְיוֹת עַל הַגֶּל",p:"lihyot al hagal",f:"être dans le coup / à la page",r:"—",ex:"חשוב להיות על הגל בכל הקשור לשיווק דיגיטלי",ef:"Il est important d'être dans le coup en ce qui concerne le marketing digital",n:"Expression idiomatique — lit. être sur la vague. Registre courant."},
+    {h:"לְהָכִיל",p:"lekhakil",f:"contenir / tolérer / absorber",r:"כ-ו-ל",ex:"קשה להכיל שינויים כל כך גדולים בזמן קצר כל כך",ef:"Il est difficile d'absorber des changements si importants en si peu de temps",n:"Hif'il — double sens concret (contenir un volume) et abstrait (tolérer)."}
+  ]
+};
+
+// ============================================================
+// GRAMMAR LESSONS (dense)
+// ============================================================
+const LESS={
+  0:{title:"Le Passé Pa'al — Binyan פָּעַל",secs:[
+    {t:"1. Terminaisons du passé — toutes identiques pour tous les binyanim",
+    body:"Les terminaisons du passé sont <strong>universelles</strong> : elles s'appliquent à Pa'al, Pi'el, Hif'il, Hitpa'el. Mémorise-les une fois pour toutes.",
+    tab:{cols:["Pronom","Terminaison","Exemple (כתב)","Traduction"],rows:[
+      ["אני","תִּי","כָּתַבְתִּי","j'ai écrit"],["אתה","תָּ","כָּתַבְתָּ","tu as écrit (m.)"],
+      ["את","תְּ","כָּתַבְתְּ","tu as écrit (f.)"],["הוא","—","כָּתַב","il a écrit"],
+      ["היא","ה","כָּתְבָה","elle a écrit"],["אנחנו","נוּ","כָּתַבְנוּ","nous avons écrit"],
+      ["אתם/ן","תֶּם/תֶּן","כְּתַבְתֶּם","vous avez écrit"],["הם/הן","וּ","כָּתְבוּ","ils ont écrit"]
+    ]},
+    warn:"<strong>⚠️ ERREUR LA PLUS FRÉQUENTE :</strong> Le יוד dans les verbes à voyelle longue au passé. Quand la 3ème pers. m. a un חִירֶק (son 'i' long) — קִיבֵּל, דִּיבֵּר, הִכִּיר, הִגִּיעַ — ce יוד RESTE dans toutes les formes : קִיבַּלְתִּי (pas קַבַּלְתִּי !), דִּיבַּרְתִּי (pas דַּבַּרְתִּי !). Sans ce יוד la forme est incorrecte."},
+    {t:"2. Racines gutturales — א ה ח ע",
+    body:"Les lettres gutturales ne peuvent pas recevoir de dagesh (redoublement). Elles modifient les voyelles environnantes.",
+    exs:[
+      {eh:"שָׁמַעְתִּי",ep:"shama'ti",ef:"j'ai entendu (√ש-מ-ע)"},
+      {eh:"עָמַדְתִּי",ep:"amadti",ef:"j'ai tenu bon/je me suis levée (√ע-מ-ד)"},
+      {eh:"חָשַׁבְתִּי",ep:"khashavti",ef:"j'ai pensé (√ח-ש-ב)"},
+      {eh:"שָׁכַחְתִּי",ep:"shakhakhti",ef:"j'ai oublié (√ש-כ-ח)"}
+    ],
+    warn:"<strong>⚠️ שָׁכַחְתִּי</strong> se prononce sha-<strong>KHAKH</strong>-ti (deux kh successifs). Très courant de n'en prononcer qu'un. La racine est ש-כ-ח : le ח final crée un pattern de double gutturale."},
+    {t:"3. Aspect accompli vs. non-accompli — mots-outils",
+    body:"L'hébreu ne marque pas seulement le temps mais aussi l'aspect (accompli/non-accompli). Ces mots modifient l'aspect :",
+    exs:[
+      {eh:"כְּבָר שָׁלַחְתִּי",ep:"kvar shalakhti",ef:"J'ai déjà envoyé (accompli, fini)"},
+      {eh:"עֲדַיִן לֹא שָׁלַחְתִּי",ep:"adayin lo shalakhti",ef:"Je n'ai pas encore envoyé (incomplet)"},
+      {eh:"לֹא שָׁלַחְתִּי עוֹד",ep:"lo shalakhti od",ef:"Je n'ai toujours pas envoyé"},
+      {eh:"זֶה עַתָּה שָׁלַחְתִּי",ep:"ze ata shalakhti",ef:"Je viens juste d'envoyer"}
+    ],note:"💡 כְּבָר + passé = action accomplie et définitivement révolue. עֲדַיִן + présent = action toujours en cours. עֲדַיִן + négatif = action attendue mais pas encore réalisée."}
+  ]},
+  1:{title:"Le Binyan Pi'el — פִּיעֵל",secs:[
+    {t:"1. Caractéristiques — dagesh + sens",
+    body:"Le Pi'el se reconnaît au <strong>dagesh sur la 2ème lettre</strong> de la racine. Il exprime : action intensive, répétée, exercée sur autrui, ou causative. C'est le binyan des verbes de communication.",
+    tab:{cols:["Temps","Pronom","Forme (דבר)","Traduction"],rows:[
+      ["Présent","m.sg","מְדַבֵּר","je/tu/il parle"],["Présent","f.sg","מְדַבֶּרֶת","je/tu/elle parle"],
+      ["Passé","אני","דִּיבַּרְתִּי","j'ai parlé"],["Passé","הוא","דִּיבֵּר","il a parlé"],
+      ["Passé","היא","דִּיבְּרָה","elle a parlé"],["Futur","אני","אֲדַבֵּר","je parlerai"],
+      ["Futur","הם","יְדַבְּרוּ","ils parleront"]
+    ]},
+    warn:"<strong>⚠️ Gutturale en position 2 :</strong> Pour les verbes avec gutturale à la 2ème place (מְאַחֵר, מְבַשֵּׂל, etc.), le dagesh disparaît et la voyelle précédente s'allonge compensatoirement. Ex: מְאַ<strong>ח</strong>ֵר (en retard) — pas de dagesh sur le ח."},
+    {t:"2. Verbes Pi'el fondamentaux à connaître",
+    exs:[
+      {eh:"לְדַבֵּר",ep:"ledaber",ef:"parler"},
+      {eh:"לְסַפֵּר",ep:"lesaper",ef:"raconter"},
+      {eh:"לְשַׁלֵּם",ep:"leshalem",ef:"payer"},
+      {eh:"לְחַפֵּשׂ",ep:"lekhapes",ef:"chercher"},
+      {eh:"לְנַסּוֹת",ep:"lenasot",ef:"essayer"},
+      {eh:"לְשַׁכְנֵעַ",ep:"leshakhne'a",ef:"convaincre"},
+      {eh:"לְאַרְגֵּן",ep:"leargen",ef:"organiser"},
+      {eh:"לְקַבֵּל",ep:"lekabel",ef:"recevoir (aussi Pa'al)"}
+    ],note:"💡 Moyen mnémotechnique : le Pi'el = je mets de l'INTENSITÉ dans mon action. Parler avec insistance, chercher activement, payer de sa poche — toujours une énergie dirigée vers quelqu'un ou quelque chose."}
+  ]},
+  2:{title:"Le Futur et le Conditionnel irréel",secs:[
+    {t:"1. Futur Pa'al — préfixes ATNIT",
+    body:"Le futur se forme avec des préfixes. Retiens l'acronyme ATNIT : א-ת-נ-י-ת (ani, ata/hi, anakhnu, hu, atem).",
+    tab:{cols:["Pronom","Préfixe","Futur de כתב","Traduction"],rows:[
+      ["אני","אֶ","אֶכְתּוֹב","j'écrirai"],["אתה","תִּ","תִּכְתּוֹב","tu écriras (m.)"],
+      ["את","תִּ+י","תִּכְתְּבִי","tu écriras (f.)"],["הוא","יִ","יִכְתּוֹב","il écrira"],
+      ["היא","תִּ","תִּכְתּוֹב","elle écrira (= tu m. !)"],
+      ["אנחנו","נִ","נִכְתּוֹב","nous écrirons"],
+      ["אתם/ן","תִּ+וּ","תִּכְתְּבוּ","vous écrirez"],
+      ["הם/הן","יִ+וּ","יִכְתְּבוּ","ils écriront"]
+    ]},
+    warn:"<strong>⚠️ Ambiguïté תִּ :</strong> תִּכְתּוֹב peut signifier 'tu écriras' (m.) OU 'elle écrira'. Seul le contexte distingue. À l'oral on peut clarifier avec le pronom (הוא/את) mais les Israéliens ne le font souvent pas."},
+    {t:"2. Les trois conditionnels — אִם / לוּ / אִילּוּ",
+    body:"C'est LA distinction qui prouve ton niveau B1. Maîtrise-la.",
+    exs:[
+      {eh:"אִם תָּבוֹאִי, נֵלֵך יַחַד",ep:"im tavo'i, nelekh yakhad",ef:"Si tu viens [possible], on ira ensemble → RÉEL (אִם + futur)"},
+      {eh:"לוּ הָיָה לִי זְמַן, הָיִיתִי לוֹמֶדֶת",ep:"lu haya li zman, hayiti lomedet",ef:"Si j'avais du temps [maintenant — je n'en ai pas], j'étudierais → IRRÉEL PRÉSENT (לוּ + passé)"},
+      {eh:"אִילּוּ יָדַעְתִּי, הָיִיתִי בָּאָה",ep:"ilu yada'ti, hayiti ba'a",ef:"Si j'avais su [hier — je n'ai pas su], je serais venue → IRRÉEL PASSÉ (אִילּוּ + passé)"}
+    ],note:"💡 RÈGLE SIMPLE : אִם = possible (indicatif FR) / לוּ = impossible maintenant (conditionnel présent FR) / אִילּוּ = impossible dans le passé (conditionnel passé FR = subjonctif plus-que-parfait)."}
+  ]},
+  3:{title:"Hif'il et Hitpa'el — Causatif et Réflexif",secs:[
+    {t:"1. Hif'il הִפְעִיל — le causatif",
+    body:"Le Hif'il = faire faire quelque chose / rendre quelque chose. Passé : הִ + racine. Présent : מַ + racine.",
+    tab:{cols:["Temps","Pronom","Forme (הסביר)","Traduction"],rows:[
+      ["Passé","אני","הִסְבַּרְתִּי","j'ai expliqué"],["Passé","הוא","הִסְבִּיר","il a expliqué"],
+      ["Passé","היא","הִסְבִּירָה","elle a expliqué"],["Passé","אנחנו","הִסְבַּרְנוּ","nous avons expliqué"],
+      ["Présent","m.","מַסְבִּיר","j'explique (m.)"],["Présent","f.","מַסְבִּירָה","j'explique (f.)"]
+    ]},
+    exs:[
+      {eh:"יָצָא vs הוֹצִיא",ep:"yatsa / hotsi",ef:"sortir (intransitif) / sortir qch, faire sortir"},
+      {eh:"נָפַל vs הִפִּיל",ep:"nafal / hipil",ef:"tomber / faire tomber"},
+      {eh:"לָמַד vs הִלְמִיד",ep:"lamad / hilmid",ef:"apprendre / enseigner (faire apprendre)"}
+    ],warn:"<strong>⚠️</strong> Hif'il passé commence TOUJOURS par הִ. Ex: הֶחְלַטְתִּי (j'ai décidé), הִגַּעְתִּי (je suis arrivée), הִצְלַחְתִּי (j'ai réussi). Ne jamais oublier ce ה !"},
+    {t:"2. Hitpa'el הִתְפַּעֵל — le réflexif",
+    body:"Le Hitpa'el = action sur soi-même ou réciproque. Passé : הִתְ + racine. Présent : מִתְ + racine.",
+    exs:[
+      {eh:"הִסְתַּדַּרְתִּי",ep:"histadarti",ef:"je me suis débrouillée"},
+      {eh:"הִתְרַשַּׁמְתִּי",ep:"hitraShamti",ef:"j'ai été impressionnée"},
+      {eh:"הִתְעַכַּבְתִּי",ep:"hit'akavti",ef:"j'ai été retardée"},
+      {eh:"הִתְמַקַּחְתִּי",ep:"hitmakaḥti",ef:"j'ai marchandé"},
+      {eh:"הִתְפַּשַּׁרְתִּי",ep:"hitpasharti",ef:"j'ai fait des compromis"}
+    ],note:"💡 Hitpa'el est souvent passif en apparence mais actif en réalité — c'est toi qui te mets dans cet état. הִסְתַּדַּרְתִּי = je me suis organisée (moi-même)."}
+  ]},
+  4:{title:"Synthèse — 4 Binyanim + Tes erreurs récurrentes",secs:[
+    {t:"Tableau comparatif — même racine ד-ב-ר",
+    tab:{cols:["Binyan","Passé 3m.","Passé 1sg.","Présent m.","Sens"],rows:[
+      ["Pa'al","דָּבַר","דָּבַרְתִּי","דּוֹבֵר","parler (formel/archaïque)"],
+      ["Pi'el","דִּיבֵּר","דִּיבַּרְתִּי","מְדַבֵּר","parler (courant)"],
+      ["Hif'il","הִדְבִּיר","הִדְבַּרְתִּי","מַדְבִּיר","dominer/subjuguer"],
+      ["Hitpa'el","הִתְדַּבֵּר","הִתְדַּבַּרְתִּי","מִתְדַּבֵּר","se concerter"]
+    ]},body:""},
+    {t:"Tes erreurs récurrentes documentées",
+    warn:"<strong>⚠️ Les 4 erreurs les plus fréquentes :</strong><br>(1) <strong>יוד manquant</strong> au passé Pi'el/Hif'il : דִּיבַּרְתִּי (pas דַּבַּרְתִּי), קִיבַּלְתִּי (pas קַבַּלְתִּי)<br>(2) <strong>את obligatoire</strong> avant tout objet direct DÉFINI : שלחתי <u>את</u> ההצעה (pas שלחתי ההצעה)<br>(3) <strong>אילו vs לו</strong> : irréel PASSÉ = אילו / irréel PRÉSENT = לו<br>(4) <strong>להתמקד ב</strong> (pas על) — préposition ב après להתמקד",
+    note:"💡 Règle mnémotechnique pour את : si le mot qui suit a ה (le), un suffixe possessif (שלי), ou est un prénom → את est obligatoire."}
+  ]}
+};
+
+// ============================================================
+// CONJUGATION QUIZZES (10 questions each)
+// ============================================================
+const CONJS={
+  0:{title:"Pa'al passé — quiz 10 questions",
+  quiz:[
+    {q:"Conjugue קִיבֵּל à la 1ère pers. singulier passé",a:"קיבלתי",ch:["קבלתי","קיבלתי","קיבל","קיבלנו"],e:"יוד obligatoire — קיבל → קיבלתי (le i long se maintient)"},
+    {q:"Conjugue שָׁכַח à la 3ème pers. féminin singulier passé",a:"שכחה",ch:["שכחתי","שכחה","שכחו","שכחת"],e:"Pa'al passé 3ème f.sg. — terminaison ה, pas de יוד"},
+    {q:"Conjugue שָׁמַע à la 1ère pers. pluriel passé",a:"שמענו",ch:["שמענו","שמעתי","שמעו","שמעת"],e:"Pa'al passé 1ère pl. — terminaison נוּ"},
+    {q:"Quelle forme est correcte — 'vous avez compris' (הֵבִין) ?",a:"הבנתם",ch:["הבינתם","הבנתם","הבינו","הבנו"],e:"Hif'il passé 2ème m.pl. — הֵבַנְתֶּם (avec ַ pas ִי)"},
+    {q:"'elle a oublié' — Pa'al 3ème f. de שכח",a:"שכחה",ch:["שכחה","שכחת","שכחנו","שכחו"],e:"Pa'al passé 3ème f. → שָׁכְחָה"},
+    {q:"Conjugue עָמַד à la 3ème pers. pluriel passé",a:"עמדו",ch:["עמדנו","עמדו","עמדתם","עמד"],e:"Pa'al passé 3ème pl. → עָמְדוּ (notez la voyelle qui change)"},
+    {q:"Conjugue כָּתַב à la 2ème pers. féminin singulier passé",a:"כתבת",ch:["כתבתי","כתבת","כתבתם","כתב"],e:"Pa'al passé 2ème f.sg. — terminaison תְּ (prononcé -t)"},
+    {q:"'j'ai réussi' — Hif'il passé 1ère sg. de הצליח",a:"הצלחתי",ch:["הצלחתי","הצליחתי","הצלחנו","הצליח"],e:"Hif'il passé 1ère sg. → הִצְלַחְתִּי (pas de יוד ici, racine צ-ל-ח)"},
+    {q:"Conjugue חָשַׁב à la 1ère pers. singulier passé",a:"חשבתי",ch:["חשבתי","חשבת","חשבנו","חשב"],e:"Pa'al passé 1ère sg. → חָשַׁבְתִּי"},
+    {q:"Quelle forme signifie 'ils ont décidé' (Hif'il de החליט) ?",a:"החליטו",ch:["החלטנו","החליטו","החלטתם","החליט"],e:"Hif'il passé 3ème pl. → הֶחְלִיטוּ"}
+  ]},
+  1:{title:"Pi'el passé et présent — quiz 10 questions",
+  quiz:[
+    {q:"Pi'el présent m.sg. de ארגן (organiser)",a:"מארגן",ch:["ארגן","מארגן","מארגנת","ארגנתי"],e:"Pi'el présent : מְ + dagesh sur 2ème lettre → מְאַרְגֵּן"},
+    {q:"Pi'el passé 1ère sg. de חיפש (chercher)",a:"חיפשתי",ch:["חפשתי","מחפש","חיפשתי","חיפש"],e:"Pi'el passé → חִיפַּשְׁתִּי (avec יוד car 3ème pers. = חִיפֵּשׁ)"},
+    {q:"Pi'el présent f.sg. de סיפר (raconter)",a:"מספרת",ch:["ספרה","מספרת","מספרות","סיפרה"],e:"Pi'el présent f.sg. → מְסַפֶּרֶת"},
+    {q:"Pi'el passé 1ère pl. de שכנע (convaincre)",a:"שכנענו",ch:["שכנעתי","שיכנענו","שכנענו","משכנעים"],e:"Pi'el passé 1ère pl. → שִׁכְנַעְנוּ"},
+    {q:"Pi'el passé 3ème f.sg. de ניסה (essayer)",a:"ניסתה",ch:["ניסיתי","ניסה","ניסתה","מנסה"],e:"Pi'el passé 3ème f.sg. → נִיסְּתָה"},
+    {q:"'il a payé' — Pi'el passé 3ème m. de שילם",a:"שילם",ch:["שיילם","שילמתי","שילם","מְשַׁלֵּם"],e:"Pi'el passé 3ème m. → שִׁלֵּם (forme de base du Pi'el passé)"},
+    {q:"Pi'el passé 1ère sg. de דיבר (parler)",a:"דיברתי",ch:["דברתי","דיברתי","מדבר","דיבר"],e:"Pi'el passé → דִּיבַּרְתִּי avec יוד — erreur fréquente : omettre le יוד"},
+    {q:"Pi'el présent m.pl. de שלם (payer)",a:"משלמים",ch:["שלמים","משלמים","מְשַׁלֵּם","שילמנו"],e:"Pi'el présent m.pl. → מְשַׁלְּמִים"},
+    {q:"'nous avons organisé' — Pi'el passé 1ère pl.",a:"ארגנו",ch:["ארגנתי","ארגנו","מארגנים","אירגנו"],e:"Pi'el passé 1ère pl. → אִרְגַּנּוּ (pas de יוד ici, racine א-ר-ג-נ)"},
+    {q:"Pi'el passé 3ème m. de בישל (cuisiner)",a:"בישל",ch:["ביישל","בישל","מבשל","בישלתי"],e:"Pi'el passé 3ème m. → בִּישֵּׁל (forme de base)"}
+  ]},
+  2:{title:"Futur + Conditionnel — quiz 10 questions",
+  quiz:[
+    {q:"Futur Pa'al 1ère sg. de לשלוח (envoyer)",a:"אשלח",ch:["שלחתי","אשלח","ישלח","נשלח"],e:"Futur Pa'al 1ère sg. : א + racine → אֶשְׁלַח"},
+    {q:"Futur Pa'al 3ème pl. de לכתוב",a:"יכתבו",ch:["כתבו","יכתוב","יכתבו","תכתבו"],e:"Futur Pa'al 3ème pl. : י + racine + וּ → יִכְתְּבוּ"},
+    {q:"Pour l'irréel passé, quelle particule ?",a:"אילו",ch:["אם","לו","אילו","כש"],e:"אִילּוּ = irréel PASSÉ. לוּ = irréel PRÉSENT. אִם = conditionnel RÉEL."},
+    {q:"Complète : ___ ידעתי, הייתי מגיעה מוקדם",a:"אילו",ch:["אם","לו","אילו","כש"],e:"Irréel passé → אִילּוּ. L'apodose : הייתי + participe passé."},
+    {q:"Futur 2ème pers. f. de לבוא (venir)",a:"תבואי",ch:["תבוא","תבואי","תבואו","אבוא"],e:"Futur Pa'al 2ème f.sg. : ת + racine + י → תָּבוֹאִי"},
+    {q:"Complète : לו ___ לי יותר כסף, הייתי נוסעת",a:"היה",ch:["יש","יהיה","היה","הייתי"],e:"Irréel présent : לו + היה (passé) + לי → לוּ הָיָה לִי..."},
+    {q:"Futur Hif'il 1ère sg. de להסביר",a:"אסביר",ch:["אסביר","הסברתי","מסביר","הסביר"],e:"Hif'il futur 1ère sg. : א + racine → אַסְבִּיר"},
+    {q:"'ils arriveront' — futur Hif'il de הגיע",a:"יגיעו",ch:["הגיעו","מגיעים","יגיעו","נגיע"],e:"Hif'il futur 3ème pl. → יַגִּיעוּ"},
+    {q:"Quelle phrase exprime un conditionnel RÉEL ?",a:"אם תבואי, נאכל יחד",ch:["אם תבואי, נאכל יחד","לו באת, היינו אוכלים","אילו באת, היינו אוכלים","לו תבואי, נאכל"],e:"אִם + futur = conditionnel réel (la venue est possible). לוּ/אִילּוּ + passé = irréel."},
+    {q:"Futur Pi'el 1ère sg. de לדבר",a:"אדבר",ch:["אדבר","דיברתי","מדבר","ידבר"],e:"Pi'el futur 1ère sg. → אֲדַבֵּר"}
+  ]},
+  3:{title:"Hif'il et Hitpa'el — quiz 10 questions",
+  quiz:[
+    {q:"Hif'il passé 1ère sg. de הצליח (réussir)",a:"הצלחתי",ch:["הצלחתי","צלחתי","מצליח","הצליחה"],e:"Hif'il passé 1ère sg. → הִצְלַחְתִּי"},
+    {q:"Hitpa'el présent f.sg. de הסתדר (se débrouiller)",a:"מסתדרת",ch:["מסתדרת","הסתדרה","מסתדרים","הסתדרת"],e:"Hitpa'el présent f.sg. → מִסְתַּדֶּרֶת"},
+    {q:"Hif'il présent m.sg. de הסביר (expliquer)",a:"מסביר",ch:["הסביר","מסביר","מסבירה","הסברתי"],e:"Hif'il présent m.sg. → מַסְבִּיר"},
+    {q:"Hitpa'el passé 3ème f.sg. de התמקח (marchander)",a:"התמקחה",ch:["מתמקחת","התמקחה","התמקחתי","מתמקחות"],e:"Hitpa'el passé 3ème f.sg. → הִתְמַקְּחָה"},
+    {q:"Quel binyan est מִתְרַשֵּׁם ?",a:"Hitpa'el présent m.",ch:["Pa'al présent","Pi'el présent","Hif'il présent","Hitpa'el présent m."],e:"מִתְ = préfixe du Hitpa'el présent. מִתְרַשֵּׁם = être impressionné (présent m.)"},
+    {q:"Hif'il passé 3ème f.sg. de הגיע",a:"הגיעה",ch:["הגיע","הגיעה","הגעתי","מגיעה"],e:"Hif'il passé 3ème f.sg. → הִגִּיעָה"},
+    {q:"Hitpa'el passé 1ère sg. de התעכב (être retardé)",a:"התעכבתי",ch:["עכבתי","התעכב","התעכבתי","מתעכב"],e:"Hitpa'el passé 1ère sg. → הִתְעַכַּבְתִּי"},
+    {q:"Hif'il passé 1ère pl. de הכין (préparer)",a:"הכנו",ch:["הכנתי","הכנו","הכינה","מכינים"],e:"Hif'il passé 1ère pl. → הִכַּנּוּ"},
+    {q:"'elle s'est débrouillée' — Hitpa'el passé",a:"הסתדרה",ch:["סדרה","הסתדרה","מסתדרת","הסדירה"],e:"Hitpa'el passé 3ème f.sg. → הִסְתַּדְּרָה"},
+    {q:"Quelle paire Pa'al / Hif'il est CORRECTE ?",a:"נָפַל = tomber / הִפִּיל = faire tomber",ch:["נָפַל = tomber / הִפִּיל = faire tomber","יָצָא = faire sortir / הוֹצִיא = sortir","לָמַד = enseigner / הִלְמִיד = apprendre","נִכְנַס = faire entrer / הִכְנִיס = entrer"],e:"Pa'al = intransitif/simple / Hif'il = causatif (fait faire). יָצָא = sortir / הוֹצִיא = faire sortir/sortir qch."}
+  ]},
+  4:{title:"Quiz mixte — 4 binyanim + vocabulaire avancé",
+  quiz:[
+    {q:"Quel binyan est הִסְתַּדַּרְתִּי ?",a:"Hitpa'el",ch:["Pa'al","Pi'el","Hif'il","Hitpa'el"],e:"הִתְ au début = Hitpa'el passé. הִסְתַּ = הִתְ + ס assimilation phonétique."},
+    {q:"Forme CORRECTE pour 'j'ai parlé' en Pi'el",a:"דיברתי",ch:["דברתי","דיברתי","מדברתי","דיבר"],e:"Pi'el passé 1ère sg. → דִּיבַּרְתִּי avec יוד. Sans יוד = forme incorrecte."},
+    {q:"Quelle phrase utilise correctement את ?",a:"שלחתי את ההצעה",ch:["שלחתי ההצעה","שלחתי את ההצעה","שלחתי ל-ההצעה","שלחתי עם ההצעה"],e:"Objet direct défini (ה = le/la) → OBLIGATOIREMENT précédé de את. Règle absolue."},
+    {q:"דַּוְקָא exprime...",a:"Ironie / insistance / dépit",ch:["Simple confirmation","Négation","Ironie / insistance / dépit","Doute"],e:"דווקא est intraduisible littéralement — il ajoute une nuance affective (justement, précisément, même)"},
+    {q:"Préposition correcte après להתמקד",a:"ב",ch:["על","ב","ל","עם"],e:"להתמקד ב = se concentrer SUR. Calque fautif du français : 'sur' → על, mais en hébreu c'est ב."},
+    {q:"'anciens clients' (de longue date) en hébreu",a:"לקוחות ותיקים",ch:["לקוחות ישנים","לקוחות ותיקים","לקוחות קודמים","לקוחות עבר"],e:"ותיק = ancien dans un rôle, expérimenté. ישן = vieux (âge ou objet). ותיקים pour les clients établis."},
+    {q:"Quel mot signifie 'néanmoins / quand même' ?",a:"בכל זאת",ch:["בכל מקרה","בכל זאת","מעבר לזה","בינתיים"],e:"בכל זאת = néanmoins/quand même (concession). בכל מקרה = dans tous les cas. Nuance importante !"},
+    {q:"Forme correcte pour 'si j'avais su' (irréel passé)",a:"אילו ידעתי",ch:["אם ידעתי","לו ידעתי","אילו ידעתי","כשידעתי"],e:"Irréel PASSÉ = אִילּוּ + passé. לוּ = irréel présent. אִם = réel."},
+    {q:"לְהִסְתַּפֵּק est du Hitpa'el. Que signifie-t-il ?",a:"se contenter de",ch:["fournir","être fourni","se contenter de","manquer de"],e:"Hitpa'el de ס-פ-ק. לְסַפֵּק (Pi'el) = fournir. לְהִסְתַּפֵּק (Hitpa'el) = se contenter de (réflexif)."},
+    {q:"'en aucun cas' en hébreu",a:"בשום אופן לא",ch:["בכל מקרה לא","בשום פנים ואופן","בשום אופן לא","כלל וכלל לא"],e:"בשום אופן לא = en aucun cas (locution standard). בשום פנים ואופן = encore plus fort/formel."}
+  ]}
+};
+
+// ============================================================
+// READING TEXTS — 200+ words each
+// ============================================================
+const READS={
+  0:{
+    title:"מכתב עסקי — הצעת שיתוף פעולה",
+    sub:"Texte 230 mots — registre formel. Clique sur chaque mot pour la traduction. Réponds aux 5 questions SANS regarder le texte.",
+    text:[
+      {w:"לכבוד",t:"À l'attention de"},{w:"מנהל",t:"directeur"},{w:"השיווק",t:"du marketing"},{w:"בחברת",t:"de la société"},{w:"\"גל",t:"\"Gal"},{w:"טכנולוגיות\",",t:"Technologies\","},{w:"\n"},
+      {w:"שלום",t:"Bonjour"},{w:"רב,",t:"—"},
+      {w:"\n"},{w:"אני",t:"je"},{w:"פונה",t:"m'adresse"},{w:"אליכם",t:"à vous"},{w:"בעקבות",t:"suite à"},{w:"פגישתנו",t:"notre réunion"},{w:"מהשבוע",t:"de cette semaine"},{w:"שעבר,",t:"dernière,"},{w:"שבה",t:"lors de laquelle"},{w:"דנו",t:"nous avons discuté"},{w:"בפוטנציאל",t:"du potentiel"},{w:"לשיתוף",t:"de coopération"},{w:"פעולה",t:"—"},{w:"בין",t:"entre"},{w:"חברותינו.",t:"nos entreprises."},
+      {w:"\n"},{w:"חברת",t:"La société"},{w:"מיזרה,",t:"Mizra,"},{w:"שאני",t:"que je"},{w:"מנהלת,",t:"dirige,"},{w:"מתמחה",t:"est spécialisée"},{w:"בבניית",t:"dans la construction de"},{w:"אתרי",t:"sites"},{w:"אינטרנט",t:"Internet"},{w:"מקצועיים",t:"professionnels"},{w:"לעסקים",t:"pour les entreprises"},{w:"קטנים",t:"petites"},{w:"ובינוניים",t:"et moyennes"},{w:"בישראל.",t:"en Israël."},
+      {w:"\n"},{w:"אנו",t:"Nous"},{w:"מציעים",t:"proposons"},{w:"חבילה",t:"un forfait"},{w:"מקיפה",t:"complet"},{w:"הכוללת",t:"qui comprend"},{w:"בניית",t:"la construction de"},{w:"אתר",t:"site"},{w:"מותאם",t:"personnalisé"},{w:"אישית,",t:"—"},{w:"אופטימיזציה",t:"optimisation"},{w:"מלאה",t:"complète"},{w:"למנועי",t:"pour les moteurs de"},{w:"חיפוש,",t:"recherche,"},{w:"שילוב",t:"intégration"},{w:"בפלטפורמות",t:"dans les plateformes"},{w:"של",t:"de"},{w:"רשתות",t:"réseaux"},{w:"חברתיות,",t:"sociaux,"},{w:"וכן",t:"ainsi que"},{w:"ארבעה",t:"quatre"},{w:"חודשי",t:"mois de"},{w:"תמיכה",t:"support"},{w:"טכנית",t:"technique"},{w:"מלאה.",t:"complet."},
+      {w:"\n"},{w:"כל",t:"Tout"},{w:"העבודות",t:"les travaux"},{w:"מתבצעות",t:"sont effectués"},{w:"תוך",t:"en"},{w:"ארבעים",t:"quarante"},{w:"ושמונה",t:"et huit"},{w:"שעות",t:"heures"},{w:"מרגע",t:"dès le moment de"},{w:"אישור",t:"la confirmation"},{w:"ההזמנה,",t:"de la commande,"},{w:"ללא",t:"sans"},{w:"פשרות",t:"compromis"},{w:"על",t:"sur"},{w:"האיכות.",t:"la qualité."},
+      {w:"\n"},{w:"המחיר",t:"Le prix"},{w:"הכולל",t:"total"},{w:"לחבילה",t:"pour le forfait"},{w:"הבסיסית",t:"de base"},{w:"עומד",t:"s'élève"},{w:"על",t:"à"},{w:"אלף",t:"mille"},{w:"ותשע",t:"et neuf"},{w:"מאות",t:"cents"},{w:"ותשעים",t:"et quatre-vingt-dix"},{w:"שקל",t:"shekels"},{w:"בלבד,",t:"seulement,"},{w:"כולל",t:"incluant"},{w:"מע\"מ.",t:"la TVA."},
+      {w:"\n"},{w:"אני",t:"Je"},{w:"מאמינה",t:"crois"},{w:"כי",t:"que"},{w:"שיתוף",t:"la coopération"},{w:"הפעולה",t:"—"},{w:"שלנו",t:"notre"},{w:"יניב",t:"donnera"},{w:"תועלת",t:"un bénéfice"},{w:"הדדית",t:"mutuel"},{w:"משמעותית",t:"significatif"},{w:"לשני",t:"pour les deux"},{w:"הצדדים.",t:"parties."},
+      {w:"\n"},{w:"בברכה,",t:"Cordialement,"},{w:"\n"},{w:"מרגו",t:"Margaux"},{w:"אדה",t:"Adda"},{w:"\n"},{w:"מנכ\"לית",t:"Directrice générale"},{w:"מיזרה",t:"Mizra"}
+    ],
+    qs:[
+      {q:"מה מיזרה מציעה ללקוחות שלה? (ציין לפחות 4 דברים)",a:"בניית אתר מותאם אישית, אופטימיזציה למנועי חיפוש, שילוב ברשתות חברתיות, וארבעה חודשי תמיכה טכנית מלאה",aFr:"Site perso + SEO + réseaux sociaux + 4 mois support"},
+      {q:"תוך כמה שעות מתבצעות העבודות?",a:"תוך ארבעים ושמונה שעות מרגע אישור ההזמנה",aFr:"48h dès confirmation commande"},
+      {q:"מה המחיר הכולל לחבילה הבסיסית?",a:"אלף ותשע מאות ותשעים שקל כולל מע\"מ",aFr:"1990 shekels TTC"},
+      {q:"זהי שני פעלים בנפעל בטקסט (בניין נפעל = passif)",a:"סוכם (il a été convenu) — ou דנו si Pa'al pl. / מתבצעות (sont effectués — Hitpa'el/Nif'al)",aFr:"Formes passives"},
+      {q:"מה הביטוי שמציין שהחברות כבר נפגשו? תרגמי אותו.",a:"בעקבות פגישתנו מהשבוע שעבר — suite à notre réunion de la semaine dernière",aFr:"Suite à notre réunion"}
+    ]
+  },
+  1:{
+    title:"שיחת מכירות — משא ומתן ממשי",
+    sub:"Texte 220 mots — dialogue authentique. Langue parlée mêlée à la langue standard.",
+    text:[
+      {w:"דָּוִיד:",t:"David :"},{w:"שלום",t:"Bonjour"},{w:"מרגו.",t:"Margaux."},{w:"ראיתי",t:"J'ai vu"},{w:"את",t:"(acc.)"},{w:"ההצעה",t:"la proposition"},{w:"שלך",t:"la tienne"},{w:"ברשת.",t:"sur Internet."},{w:"המחיר",t:"Le prix"},{w:"נראה",t:"semble"},{w:"גבוה",t:"élevé"},{w:"לעסק",t:"pour une entreprise"},{w:"קטן",t:"petite"},{w:"כמונו.",t:"comme la nôtre."},
+      {w:"\n"},{w:"מרגו:",t:"Margaux :"},{w:"אני",t:"je"},{w:"מבינה",t:"comprends"},{w:"את",t:"(acc.)"},{w:"הדאגה",t:"la préoccupation"},{w:"שלך.",t:"la tienne."},{w:"אבל",t:"Mais"},{w:"בוא",t:"laisse-moi"},{w:"ניכנס",t:"entrons"},{w:"לפרטים",t:"dans les détails"},{w:"קצת.",t:"un peu."},{w:"מה",t:"Qu'est-ce que"},{w:"בדיוק",t:"exactement"},{w:"אתם",t:"vous"},{w:"מחפשים?",t:"cherchez ?"},
+      {w:"\n"},{w:"דָּוִיד:",t:"David :"},{w:"אתר",t:"Un site"},{w:"פשוט,",t:"simple,"},{w:"עם",t:"avec"},{w:"גלריה",t:"galerie"},{w:"של",t:"de"},{w:"המוצרים",t:"produits"},{w:"שלנו,",t:"les nôtres,"},{w:"דף",t:"page"},{w:"\"צור",t:"'contact"},{w:"קשר\",",t:"—"},{w:"ואפשרות",t:"et possibilité"},{w:"לתשלום",t:"de paiement"},{w:"אונליין.",t:"en ligne."},
+      {w:"\n"},{w:"מרגו:",t:"Margaux :"},{w:"מעולה.",t:"Parfait."},{w:"שלא",t:"Soyez"},{w:"יטעה",t:"assurés"},{w:"אתכם,",t:"—"},{w:"גם",t:"même"},{w:"עם",t:"avec"},{w:"\"פשוט\"",t:"'simple'"},{w:"אנחנו",t:"nous"},{w:"לא",t:"ne"},{w:"מתפשרים",t:"faisons pas de compromis"},{w:"על",t:"sur"},{w:"האיכות.",t:"la qualité."},{w:"כל",t:"Chaque"},{w:"אתר",t:"site"},{w:"שאנחנו",t:"que nous"},{w:"בונים",t:"construisons"},{w:"מותאם",t:"est personnalisé"},{w:"לחלוטין",t:"totalement"},{w:"לצרכים",t:"aux besoins"},{w:"של",t:"de"},{w:"העסק.",t:"l'entreprise."},
+      {w:"\n"},{w:"דָּוִיד:",t:"David :"},{w:"ואם",t:"Et si"},{w:"ניקח",t:"on prend"},{w:"שניים?",t:"deux sites ?"},{w:"יש",t:"Y a-t-il"},{w:"הנחה?",t:"une réduction ?"},
+      {w:"\n"},{w:"מרגו:",t:"Margaux :"},{w:"בהחלט.",t:"Absolument."},{w:"לחבילה",t:"Pour un forfait"},{w:"כפולה",t:"double"},{w:"אנחנו",t:"nous"},{w:"מציעים",t:"offrons"},{w:"הנחה",t:"une réduction"},{w:"של",t:"de"},{w:"חמישה",t:"cinq"},{w:"עשר",t:"—"},{w:"אחוז.",t:"pourcent."},{w:"מעבר",t:"Au-delà"},{w:"לזה,",t:"de ça,"},{w:"אתם",t:"vous"},{w:"תהיו",t:"serez"},{w:"הראשונים",t:"les premiers"},{w:"לקבל",t:"à recevoir"},{w:"את",t:"(acc.)"},{w:"כל",t:"toutes les"},{w:"העדכונים",t:"mises à jour"},{w:"החדשים",t:"nouvelles"},{w:"של",t:"de"},{w:"המערכת",t:"la plateforme"},{w:"שלנו.",t:"notre."}
+    ],
+    qs:[
+      {q:"מה ביקש דוד בדיוק?",a:"אתר פשוט עם גלריה של מוצרים, דף 'צור קשר', ואפשרות לתשלום אונליין",aFr:"Site simple avec galerie produits, contact et paiement en ligne"},
+      {q:"מה ההנחה לחבילה כפולה?",a:"חמישה עשר אחוז",aFr:"15%"},
+      {q:"מה הטענה של מרגו לגבי 'אתר פשוט'?",a:"שגם פשוט לא אומר ויתור על איכות — כל אתר מותאם לחלוטין לצרכי העסק",aFr:"Même simple = qualité totale, chaque site entièrement personnalisé"},
+      {q:"מה מוצע בנוסף להנחה לחבילה כפולה?",a:"להיות הראשונים לקבל עדכונים חדשים של המערכת",aFr:"Premiers à recevoir les mises à jour"},
+      {q:"זהי את הביטוי 'מעבר לזה' בטקסט ומה הוא עושה בטיעון?",a:"מעבר לזה — הוא מוסיף טיעון נוסף חיובי מעל ההנחה שכבר הוצעה",aFr:"Au-delà de ça — ajoute un argument supplémentaire"}
+    ]
+  },
+  2:{
+    title:"יומן אישי — חשבון נפש של יזמית",
+    sub:"Texte 240 mots — futur, conditionnel, introspection. Structures grammaticales complexes.",
+    text:[
+      {w:"יום",t:"Jour"},{w:"חמישי,",t:"jeudi,"},{w:"שנים",t:"douze"},{w:"עשר",t:"—"},{w:"במרץ",t:"en mars"},{w:"אלפיים",t:"deux mille"},{w:"ועשרים",t:"et vingt"},{w:"ושש.",t:"et six."},
+      {w:"\n"},{w:"עברו",t:"Il s'est passé"},{w:"שבועיים",t:"deux semaines"},{w:"מאז",t:"depuis que"},{w:"השקתי",t:"j'ai lancé"},{w:"את",t:"(acc.)"},{w:"מיזרה,",t:"Mizra,"},{w:"ואני",t:"et je"},{w:"עדיין",t:"suis encore"},{w:"בשלב",t:"dans la phase"},{w:"של",t:"de"},{w:"להבין",t:"comprendre"},{w:"אם",t:"si"},{w:"מה",t:"ce que"},{w:"שאני",t:"je"},{w:"עושה",t:"fais"},{w:"עובד",t:"fonctionne"},{w:"כמו",t:"comme"},{w:"שתכננתי.",t:"je l'avais planifié."},
+      {w:"\n"},{w:"אִילּוּ",t:"Si (irréel passé)"},{w:"ידעתי",t:"j'avais su"},{w:"מראש",t:"à l'avance"},{w:"כמה",t:"à quel point"},{w:"הדרך",t:"le chemin"},{w:"תהיה",t:"serait"},{w:"מלאה",t:"rempli"},{w:"בבירוקרטיה",t:"de bureaucratie"},{w:"ובחוסר",t:"et d'incertitude"},{w:"ודאות,",t:"—"},{w:"אולי",t:"peut-être"},{w:"הייתי",t:"j'aurais"},{w:"מכינה",t:"préparé"},{w:"את",t:"(acc.)"},{w:"עצמי",t:"moi-même"},{w:"אחרת.",t:"différemment."},
+      {w:"\n"},{w:"אבל",t:"Mais"},{w:"לוּ",t:"si (irréel présent)"},{w:"יכולתי",t:"je pouvais"},{w:"לחזור",t:"revenir"},{w:"בזמן,",t:"en arrière,"},{w:"לא",t:"je ne"},{w:"הייתי",t:"serais"},{w:"משנה",t:"pas changeant"},{w:"הרבה.",t:"beaucoup."},{w:"הניסיון",t:"L'expérience"},{w:"הזה,",t:"cette"},{w:"עם",t:"avec"},{w:"כל",t:"toute sa"},{w:"הקושי",t:"difficulté"},{w:"שבו,",t:"—"},{w:"הוא",t:"est"},{w:"בדיוק",t:"précisément"},{w:"מה",t:"ce"},{w:"שהיה",t:"dont j'avais"},{w:"חסר",t:"manqué"},{w:"לי.",t:"jusqu'ici."},
+      {w:"\n"},{w:"שבוע",t:"La semaine"},{w:"הבא",t:"prochaine"},{w:"אתמקד",t:"je me concentrerai"},{w:"על",t:"sur"},{w:"שלושה",t:"trois"},{w:"דברים",t:"choses"},{w:"בלבד:",t:"seulement :"},{w:"לסגור",t:"conclure"},{w:"שני",t:"deux"},{w:"לקוחות",t:"clients"},{w:"חדשים,",t:"nouveaux,"},{w:"לשלוח",t:"envoyer"},{w:"מאה",t:"cent"},{w:"הודעות",t:"messages"},{w:"ווטסאפ,",t:"WhatsApp,"},{w:"ולפגוש",t:"et rencontrer"},{w:"אלסיה",t:"Alessia"},{w:"לסיכום",t:"pour un bilan"},{w:"שבועי.",t:"hebdomadaire."},
+      {w:"\n"},{w:"בכל",t:"Dans"},{w:"מקרה,",t:"tous les cas,"},{w:"אני",t:"je"},{w:"גאה",t:"suis fière"},{w:"בזה",t:"de cela"},{w:"שהתחלתי.",t:"d'avoir commencé."},{w:"ספק",t:"Doute"},{w:"לי",t:"pour moi"},{w:"אם",t:"si"},{w:"הייתי",t:"j'aurais"},{w:"מצליחה",t:"réussi"},{w:"לצאת",t:"à sortir"},{w:"לדרך",t:"vers ce chemin"},{w:"בלי",t:"sans"},{w:"הלחץ",t:"la pression"},{w:"הזה.",t:"cette."}
+    ],
+    qs:[
+      {q:"כמה זמן עבר מאז השקת מיזרה?",a:"שבועיים",aFr:"Deux semaines"},
+      {q:"מה הכותבת הייתה עושה אחרת אילו ידעה מראש?",a:"הייתה מכינה את עצמה אחרת לבירוקרטיה ולחוסר ודאות",aFr:"Aurait préparé différemment à la bureaucratie et l'incertitude"},
+      {q:"מהם שלושת היעדים לשבוע הבא?",a:"לסגור שני לקוחות חדשים, לשלוח מאה הודעות ווטסאפ, ולפגוש את אלסיה לסיכום שבועי",aFr:"2 clients, 100 WhatsApp, réunion Alessia"},
+      {q:"מה ההבדל בין השימוש ב-'אילו' ו-'לו' בטקסט הזה?",a:"אילו ידעתי = irréel passé (elle n'a pas su à l'avance). לו יכולתי = irréel présent (elle ne peut pas revenir dans le temps maintenant)",aFr:"Irréel passé vs. présent"},
+      {q:"מה הרגש הסופי של הכותבת?",a:"גאה בזה שהתחלה, למרות הקשיים",aFr:"Fière d'avoir commencé malgré les difficultés"}
+    ]
+  },
+  3:{
+    title:"מאמר — יזמות נשית בישראל",
+    sub:"Texte 250 mots — registre journalistique. Vocabulaire professionnel et sociétal.",
+    text:[
+      {w:"יזמות",t:"Entrepreneuriat"},{w:"נשית",t:"féminin"},{w:"בישראל",t:"en Israël"},{w:"נמצאת",t:"se trouve"},{w:"בעלייה",t:"en hausse"},{w:"משמעותית",t:"significative"},{w:"בשנים",t:"ces dernières"},{w:"האחרונות.",t:"années."},
+      {w:"\n"},{w:"על",t:"Selon"},{w:"פי",t:"—"},{w:"נתוני",t:"les données de"},{w:"הלשכה",t:"le Bureau"},{w:"המרכזית",t:"central"},{w:"לסטטיסטיקה,",t:"des statistiques,"},{w:"מספר",t:"le nombre"},{w:"העסקים",t:"d'entreprises"},{w:"שפתחו",t:"ouvertes"},{w:"נשים",t:"par des femmes"},{w:"גדל",t:"a augmenté"},{w:"בכעשרים",t:"d'environ vingt"},{w:"ושלושה",t:"et trois"},{w:"אחוז",t:"pourcent"},{w:"בחמש",t:"en cinq"},{w:"השנים",t:"années"},{w:"האחרונות.",t:"dernières."},
+      {w:"\n"},{w:"אחת",t:"Un"},{w:"הסיבות",t:"des facteurs"},{w:"העיקריות",t:"principaux"},{w:"לגידול",t:"à cette croissance"},{w:"הזה",t:"—"},{w:"היא",t:"est"},{w:"הנגישות",t:"l'accessibilité"},{w:"לכלים",t:"aux outils"},{w:"דיגיטליים.",t:"numériques."},{w:"כיום,",t:"Aujourd'hui,"},{w:"ניתן",t:"il est possible"},{w:"להקים",t:"de créer"},{w:"עסק",t:"une entreprise"},{w:"מקצועי",t:"professionnelle"},{w:"עם",t:"avec"},{w:"השקעה",t:"un investissement"},{w:"ראשונית",t:"initial"},{w:"מינימלית",t:"minimal"},{w:"בלבד.",t:"seulement."},
+      {w:"\n"},{w:"שירותים",t:"Des services"},{w:"כמו",t:"comme"},{w:"בניית",t:"la construction de"},{w:"אתר",t:"site"},{w:"מקצועי",t:"professionnel"},{w:"תוך",t:"en"},{w:"ארבעים",t:"quarante"},{w:"ושמונה",t:"et huit"},{w:"שעות,",t:"heures,"},{w:"בדומה",t:"similairement"},{w:"למה",t:"à ce que"},{w:"שמציעה",t:"propose"},{w:"מיזרה,",t:"Mizra,"},{w:"הופכים",t:"rendent"},{w:"את",t:"(acc.)"},{w:"ה\"כניסה",t:"l'\"entrée"},{w:"לעולם",t:"dans le monde"},{w:"העסקי\"",t:"des affaires\""},{w:"לנגישה",t:"accessible"},{w:"הרבה",t:"beaucoup"},{w:"יותר.",t:"plus."},
+      {w:"\n"},{w:"עם",t:"Avec"},{w:"זאת,",t:"cela,"},{w:"האתגרים",t:"les défis"},{w:"הנשים",t:"des femmes"},{w:"היזמות",t:"entrepreneures"},{w:"עדיין",t:"restent encore"},{w:"קיימים:",t:"présents :"},{w:"גיוס",t:"levée de"},{w:"הון,",t:"fonds,"},{w:"איזון",t:"équilibre"},{w:"בין",t:"entre"},{w:"חיים",t:"vie"},{w:"אישיים",t:"personnelle"},{w:"לקריירה,",t:"et carrière,"},{w:"ולעיתים",t:"et parfois"},{w:"גם",t:"aussi"},{w:"היחס",t:"le traitement"},{w:"השונה",t:"différentiel"},{w:"מצד",t:"de la part de"},{w:"לקוחות.",t:"clients."},
+      {w:"\n"},{w:"אבל",t:"Mais"},{w:"הטרנד",t:"la tendance"},{w:"ברור:",t:"est claire :"},{w:"יותר",t:"plus de"},{w:"נשים",t:"femmes"},{w:"מחליטות",t:"décident"},{w:"לקחת",t:"de prendre"},{w:"את",t:"(acc.)"},{w:"הגורל",t:"leur destin"},{w:"שלהן",t:"—"},{w:"בידיים",t:"en mains"},{w:"שלהן.",t:"les leurs."}
+    ],
+    qs:[
+      {q:"בכמה אחוז גדל מספר העסקים שפתחו נשים?",a:"בכעשרים ושלושה אחוז בחמש השנים האחרונות",aFr:"Environ 23% en 5 ans"},
+      {q:"מה אחת הסיבות העיקריות לגידול ביזמות נשית?",a:"הנגישות לכלים דיגיטליים",aFr:"Accessibilité aux outils numériques"},
+      {q:"מהם שלושה אתגרים שעדיין קיימים?",a:"גיוס הון, איזון בין חיים אישיים לקריירה, והיחס השונה מצד לקוחות",aFr:"Levée de fonds, équilibre perso/carrière, traitement différentiel clients"},
+      {q:"מה הקשר בין מיזרה לבין הטקסט?",a:"מיזרה מוזכרת כדוגמה לשירות שמוריד את רף הכניסה לעולם העסקי",aFr:"Mizra citée comme exemple qui baisse le seuil d'entrée en business"},
+      {q:"מה המשפט האחרון אומר במילים שלך?",a:"יותר ויותר נשים בוחרות לקחת שליטה על חייהן המקצועיים",aFr:"De plus en plus de femmes choisissent de prendre le contrôle"}
+    ]
+  },
+  4:{
+    title:"ניתוח שוק — נוכחות דיגיטלית לעסקים קטנים",
+    sub:"Texte 260 mots — registre professionnel formel. Vocabulaire économique et marketing.",
+    text:[
+      {w:"בְּעִידָן",t:"À l'ère"},{w:"הַדִּיגִיטָלִי",t:"numérique"},{w:"שֶׁבּוֹ",t:"dans laquelle"},{w:"אָנוּ",t:"nous"},{w:"חַיִּים,",t:"vivons,"},{w:"הַנּוֹכְחוּת",t:"la présence"},{w:"הַמְּקוּוֶּנֶת",t:"en ligne"},{w:"שֶׁל",t:"de"},{w:"עֵסֶק",t:"toute entreprise"},{w:"הִיא",t:"est"},{w:"לֹא",t:"non plus"},{w:"עוֹד",t:"—"},{w:"בְּגֶדֶר",t:"dans la catégorie de"},{w:"אוֹפְּצְיָה",t:"option"},{w:"אֶלָּא",t:"mais"},{w:"בְּגֶדֶר",t:"dans celle de"},{w:"חוֹבָה.",t:"obligation."},
+      {w:"\n"},{w:"מֶחְקָרִים",t:"Des études"},{w:"שֶׁנֶּעֶרְכוּ",t:"menées"},{w:"בְּיִשְׂרָאֵל",t:"en Israël"},{w:"בְּשָׁנַת",t:"en l'an"},{w:"אַלְפַּיִם",t:"deux mille"},{w:"וְעֶשְׂרִים",t:"et vingt"},{w:"וְחָמֵשׁ",t:"et cinq"},{w:"מְגַלִּים",t:"révèlent"},{w:"כִּי",t:"que"},{w:"מַעַל",t:"plus de"},{w:"שְׁמוֹנִים",t:"quatre-vingts"},{w:"וְשִׁשָּׁה",t:"et six"},{w:"אָחוּז",t:"pourcent"},{w:"מֵהַצְּרָכָנִים",t:"des consommateurs"},{w:"מְחַפְּשִׂים",t:"cherchent"},{w:"מֵידָע",t:"des informations"},{w:"בְּאִינְטֶרְנֶט",t:"sur Internet"},{w:"לִפְנֵי",t:"avant"},{w:"כָּל",t:"tout"},{w:"רְכִישָׁה,",t:"achat,"},{w:"בֵּין",t:"qu'il s'agisse"},{w:"אִם",t:"de"},{w:"מַסָּעָדָה",t:"restaurant"},{w:"מְקוֹמִית",t:"local"},{w:"וּבֵין",t:"ou de"},{w:"חֲנוּת",t:"magasin"},{w:"מוֹצָרִים.",t:"de produits."},
+      {w:"\n"},{w:"עֵסֶק",t:"Une entreprise"},{w:"שֶׁאֵין",t:"sans"},{w:"לוֹ",t:"—"},{w:"אֲתַר",t:"site"},{w:"מִקְצוּעִי",t:"professionnel"},{w:"מְאַבֵּד",t:"perd"},{w:"כָּל",t:"chaque"},{w:"יוֹם",t:"jour"},{w:"לְקוּחוֹת",t:"des clients"},{w:"פּוֹטֶנְצִיָאלִיִּים",t:"potentiels"},{w:"שֶׁעוֹבְרִים",t:"qui passent"},{w:"לַמִּתְחָרֶה",t:"chez le concurrent"},{w:"הַמְּחֻמְּשׁ",t:"mieux équipé"},{w:"יוֹתֵר.",t:"davantage."},
+      {w:"\n"},{w:"הַפִּתָרוֹן",t:"La solution"},{w:"אֵינוֹ",t:"n'est pas"},{w:"בְּהֶכְרֵחַ",t:"nécessairement"},{w:"יָקָר:",t:"chère :"},{w:"שֵׁרוּתִים",t:"Des services"},{w:"מְקוּצָּבִים",t:"calibrés"},{w:"כְּמוֹ",t:"comme"},{w:"זֶה",t:"celui"},{w:"שֶׁמַּצִּיעָה",t:"que propose"},{w:"מִיזְרָה",t:"Mizra"},{w:"מַדְגִּימִים",t:"démontrent"},{w:"כִּי",t:"que"},{w:"אֲתַר",t:"site"},{w:"מִקְצוּעִי",t:"professionnel"},{w:"יָכוֹל",t:"peut"},{w:"לְהִבָּנוֹת",t:"être construit"},{w:"תּוֹך",t:"en"},{w:"פָּחוֹת",t:"moins de"},{w:"מֵחֲמִישִּׁים",t:"cinquante"},{w:"שָׁעוֹת",t:"heures"},{w:"בְּמֶחִיר",t:"à un prix"},{w:"שֶׁכָּל",t:"que toute"},{w:"עֵסֶק",t:"entreprise"},{w:"יָכוֹל",t:"peut"},{w:"לְעַמֹּד",t:"assumer"},{w:"בּוֹ.",t:"—."},
+      {w:"\n"},{w:"הַמַּפְתֵּחַ",t:"La clé"},{w:"הוּא",t:"est"},{w:"לֹא",t:"non pas"},{w:"בְּגוֹדֶל",t:"dans la taille"},{w:"הַתַּקְצִיב,",t:"du budget,"},{w:"אֶלָּא",t:"mais"},{w:"בְּאֵיכוּת",t:"dans la qualité"},{w:"הַהַחְלָטָה",t:"de la décision"},{w:"לְהַשְׁקִיעַ",t:"d'investir"},{w:"בַּנּוֹכְחוּת",t:"dans la présence"},{w:"הַמְּקוּוֶּנֶת.",t:"en ligne."}
+    ],
+    qs:[
+      {q:"לפי הטקסט, כמה אחוז מצרכנים מחפשים ברשת לפני קנייה?",a:"מעל שמונים ושישה אחוז",aFr:"Plus de 86%"},
+      {q:"מה קורה לעסק שאין לו אתר מקצועי?",a:"מאבד לקוחות פוטנציאליים כל יום לטובת המתחרה המחומש יותר",aFr:"Perd des clients potentiels chaque jour au profit du concurrent mieux équipé"},
+      {q:"מה ה'מפתח' לפי הטקסט?",a:"לא גודל התקציב אלא איכות ההחלטה להשקיע בנוכחות המקוונת",aFr:"Pas la taille du budget mais la qualité de la décision d'investir"},
+      {q:"זהי שניים מבנין הנפעל בטקסט",a:"שנערכו (qui ont été menées — Nif'al passé) / יכול להיבנות (peut être construit — Nif'al inf.)",aFr:"Nif'al = passif"},
+      {q:"מה ההבדל בין 'אופציה' ל'חובה' בהקשר של הטקסט?",a:"בעבר נוכחות מקוונת הייתה אופציה (בחירה). היום היא חובה (הכרחית). הטקסט מציג את השינוי הזה.",aFr:"Option = choix / Obligation = nécessité absolue"}
+    ]
+  }
+};
+
+// ============================================================
+// TRANSLATIONS — 10 sentences per day, long and complex
+// ============================================================
+const TRANS={
+  0:{dir:"fr2heb",title:"10 Traductions FR → HEB — Passé et temporalité",items:[
+    {s:"Hier j'ai envoyé la proposition au client, mais je n'ai toujours pas reçu de réponse. Je ne sais pas si elle est arrivée à destination.",
+    t:"אתמול שלחתי את ההצעה ללקוח, אבל עדיין לא קיבלתי תשובה. אני לא יודעת אם היא הגיעה ליעד.",
+    n:"שלחתי (Pa'al passé) · קיבלתי — avec יוד · עדיין לא = pas encore · הגיעה ליעד (Hif'il f.)",
+    errs:[{w:"קבלתי",r:"קיבלתי",e:"יוד obligatoire — קיבל → קיבלתי. La voyelle longue de 3ème pers. reste dans toutes les formes."},{w:"שלחתי ההצעה",r:"שלחתי את ההצעה",e:"Objet direct défini (ה = le/la) → את obligatoire. Règle absolue."}]},
+    {s:"Nous avons finalement réussi à conclure le deal après trois réunions épuisantes. Néanmoins, il reste encore quelques détails importants à régler avant la signature.",
+    t:"לבסוף הצלחנו לסגור את העסקה אחרי שלוש פגישות מתישות. בכל זאת, עדיין נשארו כמה פרטים חשובים לסידור לפני החתימה.",
+    n:"הצלחנו (Hif'il) · לסגור + את + העסקה · בכל זאת = néanmoins · נשארו = sont restés (Pa'al passé pl.)",
+    errs:[{w:"בסוף",r:"לבסוף",e:"לבסוף = finalement (marqueur conclusif). בסוף = à la fin (temporel simple)."},{w:"הצלחנו לסגור העסקה",r:"הצלחנו לסגור את העסקה",e:"Objet direct défini → את obligatoire. N'oublie jamais ce את !"}]},
+    {s:"Je me souviens très bien de notre première rencontre — tu portais une chemise bleue et tu semblais pressée.",
+    t:"אני זוכרת מאוד טוב את הפגישה הראשונה שלנו — לבשת חולצה כחולה ונראית ממהרת.",
+    n:"זוכרת (Pa'al présent) · לבשת = tu portais (Pa'al passé 2ème f.) · נראית = tu semblais (Nif'al passé f.)",
+    errs:[{w:"נזכרת בפגישה",r:"זוכרת את הפגישה",e:"להיזכר (Hitpa'el) = se souvenir subitement. לזכור (Pa'al) = se souvenir en général. Ici souvenir général → לזכור + את."},{w:"נראית נחפזת",r:"נראית ממהרת",e:"ממהרת (Pi'el) = pressée, qui se dépêche. Terme courant standard."}]},
+    {s:"Elle a géré cinq projets simultanément pendant trois mois sans jamais se plaindre. C'est quelque chose que j'apprécie beaucoup chez elle.",
+    t:"היא ניהלה חמישה פרויקטים בו-זמנית במשך שלושה חודשים בלי להתלונן אף פעם. זה משהו שאני מעריכה מאוד אצלה.",
+    n:"ניהלה (Pi'el passé f.) · בו-זמנית = simultanément · להתלונן = se plaindre · מעריכה = j'apprécie (Hif'il présent f.)",
+    errs:[{w:"בלי פעם להתלונן",r:"בלי להתלונן אף פעם",e:"L'ordre en hébreu : בלי + infinitif + אף פעם. 'Jamais' = אף פעם (pas מעולם ici)."},{w:"זה משהו שאני מוקירה",r:"זה משהו שאני מעריכה",e:"להעריך (Hif'il) = apprécier (une qualité). להוקיר existe mais est très formel/littéraire."}]},
+    {s:"Avant de prendre cette décision importante, j'ai pensé longtemps et j'ai consulté plusieurs personnes de confiance.",
+    t:"לפני שקיבלתי את ההחלטה החשובה הזו, חשבתי הרבה זמן והתייעצתי עם כמה אנשים שאני סומכת עליהם.",
+    n:"קיבלתי (Pa'al passé) · חשבתי (Pa'al) · התייעצתי = j'ai consulté (Hitpa'el) · סומכת עליהם = en qui j'ai confiance",
+    errs:[{w:"לפני שהחלטתי",r:"לפני שקיבלתי את ההחלטה",e:"לקבל החלטה = prendre une décision (locution standard). להחליט = décider (simple). Les deux marchent mais לקבל החלטה est plus élaboré."},{w:"פנויי שאני סומכת",r:"אנשים שאני סומכת עליהם",e:"לסמוך על = faire confiance à. Toujours avec la préposition על + pronom suffixe : סומכת עליהם."}]},
+    {s:"J'ai oublié complètement notre réunion de mardi et je me suis souvenue seulement quand elle m'a envoyé un message.",
+    t:"שכחתי לגמרי את הפגישה של יום שלישי ונזכרתי רק כשהיא שלחה לי הודעה.",
+    n:"שכחתי (Pa'al passé, prononce sha-KHAKH-ti) · נזכרתי (Hitpa'el = me suis souvenue subitement) · רק כש = seulement quand",
+    errs:[{w:"נזכרתי רק כאשר",r:"נזכרתי רק כש",e:"כש (+ verbe) est la forme parlée/courante. כאשר est formel/littéraire. Les deux sont corrects, mais כש est plus naturel à l'oral."},{w:"שכחתי לחלוטין",r:"שכחתי לגמרי",e:"לגמרי = complètement (courant). לחלוטין = totalement (plus formel). Ici לגמרי est plus naturel."}]},
+    {s:"Nous avons décidé ensemble d'augmenter les prix de quinze pour cent à partir du mois prochain.",
+    t:"החלטנו יחד להעלות את המחירים בחמישה עשר אחוז החל מהחודש הבא.",
+    n:"החלטנו (Hif'il passé pl.) · להעלות = augmenter (Hif'il inf.) · החל מ = à partir de (formel)",
+    errs:[{w:"לגדל את המחירים",r:"להעלות את המחירים",e:"להעלות מחיר = augmenter un prix (Hif'il de עלה). לגדל = faire grandir (plantes, enfants). Erreur de verbe."},{w:"מהחודש הבא",r:"החל מהחודש הבא",e:"החל מ = à partir de (locution formelle). מ seul peut fonctionner mais החל מ est plus précis."}]},
+    {s:"Il ne m'a pas encore expliqué pourquoi il a refusé la proposition sans même la lire.",
+    t:"הוא עדיין לא הסביר לי למה הוא סרב להצעה בלי אפילו לקרוא אותה.",
+    n:"הסביר (Hif'il passé) · סרב = a refusé (Pa'al passé) · בלי אפילו = sans même",
+    errs:[{w:"הוא לא עדיין הסביר",r:"הוא עדיין לא הסביר",e:"L'ordre des mots : sujet + עדיין לא + verbe. Ne jamais séparer עדיין et לא."},{w:"לקרוא אותה",r:"לקרוא אותה",e:"Ici correct — את est nécessaire car ההצעה (la proposition) est définie."}]},
+    {s:"Dès que j'ai reçu sa réponse, j'ai immédiatement commencé à préparer le contrat.",
+    t:"ברגע שקיבלתי את התשובה שלו, מיד התחלתי להכין את ההסכם.",
+    n:"ברגע ש = dès que · קיבלתי (Pa'al passé) · מיד = immédiatement · התחלתי (Hif'il passé) · להכין (Hif'il inf.)",
+    errs:[{w:"כאשר קיבלתי",r:"ברגע שקיבלתי",e:"ברגע ש = dès que/au moment où (immédiateté). כאשר = lorsque (plus neutre). Ici ברגע ש est plus précis."},{w:"שלו התשובה",r:"התשובה שלו",e:"En hébreu le possessif שלו se place APRÈS le nom possédé. Jamais avant."}]},
+    {s:"Pendant les deux premières semaines, personne ne s'est souvenu de son nom ni de son poste.",
+    t:"במשך שבועיים הראשונים, אף אחד לא נזכר בשמו ולא בתפקידו.",
+    n:"במשך = pendant · אף אחד לא = personne ne · נזכר (Hitpa'el passé) · תפקיד = poste/rôle",
+    errs:[{w:"לא אחד נזכר",r:"אף אחד לא נזכר",e:"'Personne ne' = אף אחד לא. Toujours : אף + nom + לא + verbe. L'ordre est fixe."},{w:"שמו ותפקידו",r:"שמו ולא בתפקידו",e:"La corrélation négative : לא...ולא = ni...ni. Ici: לא נזכר בשמו ולא בתפקידו."}]}
+  ]},
+  1:{dir:"heb2fr",title:"10 Traductions HEB → FR — Commerce et argumentation",items:[
+    {s:"ניסינו לשכנע אותו שלוש פעמים שהשירות שלנו שווה את המחיר, אבל הוא עמד על כך שהתקציב שלו מוגבל לחלוטין ואין בידיו גמישות.",
+    t:"Nous avons essayé de le convaincre trois fois que notre service vaut le prix, mais il a insisté sur le fait que son budget est totalement limité et qu'il n'a aucune flexibilité.",
+    n:"שיכנענו (Pi'el passé) · עמד על כך ש = a insisté sur le fait que · מוגבל לחלוטין = totalement limité · גמישות = flexibilité",
+    errs:[{w:"il a resté sur",r:"il a insisté sur",e:"עמד על = insisted on / insisté sur. 'Rester sur' n'est pas idiomatique en français."},{w:"il n'a pas flexibilité",r:"il n'a aucune flexibilité",e:"'Pas de' + nom abstrait → 'aucune' est plus naturel en français professionnel."}]},
+    {s:"בהתאם לתנאי ההסכם שחתמנו עליו בחודש שעבר, אתם אמורים לספק את העדכון הראשון עד סוף השבוע הזה, ללא דיחוי.",
+    t:"Conformément aux conditions de l'accord que nous avons signé le mois dernier, vous êtes censés fournir la première mise à jour d'ici la fin de cette semaine, sans délai.",
+    n:"בהתאם ל = conformément à · שחתמנו עליו = que nous avons signé (prép. על suffixée) · אמורים ל = censés/supposés · ללא דיחוי = sans délai",
+    errs:[{w:"vous devez fournir",r:"vous êtes censés fournir",e:"אמורים ל = censés/supposés — obligation convenue, pas imposée. 'Vous devez' (צריך) surtraduirait."},{w:"selon le contrat",r:"conformément aux conditions de l'accord",e:"בהתאם לתנאי ההסכם est très spécifique. 'Selon le contrat' est plus vague."}]},
+    {s:"מה פתאום שנוריד את המחיר! אנחנו כבר עובדים במחיר הנמוך ביותר שאנחנו יכולים להרשות לעצמנו, ומעבר לזה, השירות שאנחנו נותנים הוא ממדרגה ראשונה.",
+    t:"Pas question qu'on baisse le prix ! On travaille déjà au prix le plus bas qu'on puisse se permettre, et au-delà de ça, le service qu'on fournit est de première qualité.",
+    n:"מה פתאום = pas question ! · ממדרגה ראשונה = de première qualité/rang",
+    errs:[{w:"absolument pas que",r:"pas question que",e:"מה פתאום ש = 'pas question que' (emphase forte). 'Absolument pas' traduit la négation mais pas l'indignation."},{w:"service de premier rang",r:"service de première qualité / service de premier ordre",e:"ממדרגה ראשונה = de premier rang/ordre. En français pro : 'de première qualité' ou 'de premier ordre'."}]},
+    {s:"הגענו להסכמה שמתאימה לשני הצדדים, ואני שמחה לומר שהשיתוף פעולה שלנו יתחיל כבר בשבוע הבא.",
+    t:"Nous sommes parvenus à un accord qui convient aux deux parties, et je suis heureuse de dire que notre coopération commencera dès la semaine prochaine.",
+    n:"הגענו להסכמה = parvenus à un accord · מתאימה ל = convient à · שיתוף פעולה = coopération",
+    errs:[{w:"nous avons atteint un accord",r:"nous sommes parvenus à un accord",e:"הגענו ל = littéralement 'sommes arrivés à'. En français : 'parvenus à' ou 'trouvé' un accord."},{w:"dès la semaine prochaine",r:"dès la semaine prochaine",e:"Correct ! כבר + futur = dès que / à partir de maintenant."}]},
+    {s:"יש לי תנאי אחד בלבד לפני שנחתום — אני רוצה לוודא שכל הפרטים הטכניים מוסדרים בכתב ואין מקום לפרשנויות שונות.",
+    t:"J'ai une seule condition avant qu'on signe — je veux m'assurer que tous les détails techniques sont réglés par écrit et qu'il n'y a pas de place pour des interprétations différentes.",
+    n:"תנאי אחד בלבד = une seule condition · לוודא = s'assurer · מוסדרים = réglés (Nif'al pl.) · פרשנויות = interprétations",
+    errs:[{w:"arrangés",r:"réglés / consignés",e:"מוסדרים (Nif'al de סדר) = mis en ordre, réglés, consignés. 'Arrangés' est flou."},{w:"il n'y a pas de place à",r:"il n'y a pas de place pour",e:"'Pour' (ל) et non 'à'. La préposition française suit 'place pour'."}]},
+    {s:"היא ניהלה את המשא ומתן בצורה מקצועית מאוד, והצליחה להשיג תנאים טובים יותר מאלה שציפינו בהתחלה.",
+    t:"Elle a mené la négociation de manière très professionnelle, et a réussi à obtenir de meilleures conditions que celles auxquelles on s'attendait au départ.",
+    n:"ניהלה את המשא ומתן = a mené la négociation · להשיג = obtenir (Hif'il) · ציפינו = on s'attendait (Pa'al passé pl.)",
+    errs:[{w:"a négocié",r:"a mené la négociation",e:"ניהלה את המשא ומתן = a mené/conduit la négociation. 'A négocié' serait ניהלה משא ומתן ou התמקחה."},{w:"que ceux qu'on attendait",r:"que celles auxquelles on s'attendait",e:"תנאים (conditions) est féminin en hébreu (אלה שציפינו). En français 'celles auxquelles' est plus précis."}]},
+    {s:"אנחנו לא יכולים להתפשר על האיכות, גם אם זה אומר שנאבד כמה לקוחות שמחפשים רק את הזול ביותר.",
+    t:"Nous ne pouvons pas faire de compromis sur la qualité, même si cela signifie qu'on perdra quelques clients qui cherchent seulement ce qui est le moins cher.",
+    n:"להתפשר = faire des compromis (Hitpa'el) · גם אם = même si · נאבד = nous perdrons (Pa'al futur) · הזול ביותר = le moins cher",
+    errs:[{w:"nous ne pouvons pas compromettre",r:"nous ne pouvons pas faire de compromis sur",e:"להתפשר = faire des compromis. 'Compromettre' (לסכן/לפגוע) est un verbe différent."},{w:"les moins chers",r:"ce qui est le moins cher / le prix le plus bas",e:"הזול ביותר = ce qui est le moins cher (adjectif substantivé). 'Les moins chers' est aussi possible mais moins naturel."}]},
+    {s:"לפי הניסיון שלי, כל לקוח שמבקש לשנות את תנאי ההסכם אחרי החתימה, גורם להפסד זמן משמעותי לשני הצדדים.",
+    t:"D'après mon expérience, tout client qui demande à modifier les termes de l'accord après la signature entraîne une perte de temps significative pour les deux parties.",
+    n:"לפי הניסיון שלי = d'après mon expérience · לשנות = modifier · גורם ל = entraîne (Pa'al présent) · הפסד = perte",
+    errs:[{w:"cause une perte",r:"entraîne une perte",e:"גורם ל = cause / entraîne. Les deux marchent, mais 'entraîne' est plus élégant en français pro."},{w:"après la signature du contrat",r:"après la signature (de l'accord)",e:"ההסכם = l'accord/le contrat. Les deux traductions sont correctes."}]},
+    {s:"מעבר לזה שהמחיר שלנו תחרותי מאוד, אנחנו גם מציעים ערבות שביעות רצון של שלושים יום עם החזר כסף מלא.",
+    t:"Au-delà du fait que notre prix est très compétitif, nous offrons également une garantie de satisfaction de trente jours avec remboursement intégral.",
+    n:"מעבר לזה ש = au-delà du fait que · ערבות שביעות רצון = garantie de satisfaction · החזר כסף מלא = remboursement intégral",
+    errs:[{w:"en plus de ça",r:"au-delà du fait que",e:"מעבר לזה ש est plus fort que 'en plus de ça' — il présuppose que le premier argument est déjà fort et en ajoute un encore meilleur."},{w:"remboursement complet",r:"remboursement intégral",e:"מלא = complet/intégral. En contexte financier 'intégral' est plus précis que 'complet'."}]},
+    {s:"בשום אופן לא נסכים לפרסם את שם החברה שלנו בלי לקבל אישור מראש ובכתב.",
+    t:"En aucun cas nous n'accepterons de publier le nom de notre entreprise sans avoir obtenu préalablement une autorisation écrite.",
+    n:"בשום אופן לא = en aucun cas · לפרסם = publier (Pi'el inf.) · אישור מראש = autorisation préalable",
+    errs:[{w:"nous ne serons pas d'accord",r:"nous n'accepterons pas",e:"לא נסכים ל = nous n'accepterons pas. 'Nous ne serons pas d'accord' est plus faible."},{w:"sans obtenir une approbation",r:"sans avoir obtenu préalablement une autorisation écrite",e:"מראש = préalablement/d'avance. ובכתב = et par écrit. Les deux détails sont importants."}]}
+  ]},
+  2:{dir:"fr2heb",title:"10 Traductions FR → HEB — Futur et hypothèse",items:[
+    {s:"Si tu avais accepté ma première offre la semaine dernière, on aurait économisé beaucoup de temps et évité beaucoup de complications.",
+    t:"אילו קיבלת את ההצעה הראשונה שלי בשבוע שעבר, היינו חוסכים הרבה זמן ומונעים הרבה סיבוכים.",
+    n:"אילו + passé = irréel passé · היינו חוסכים = nous aurions économisé · מונעים = évitant (Pa'al présent, dans la structure conditionnel)",
+    errs:[{w:"לו קיבלת",r:"אילו קיבלת",e:"לו = irréel PRÉSENT. אילו = irréel PASSÉ. La semaine dernière = passé → אילו."},{w:"היינו מחסכים",r:"היינו חוסכים",e:"Forme correcte : היינו + Pa'al présent (חוסכים). לחסוך au Pa'al présent = חוסך/חוסכת/חוסכים."}]},
+    {s:"La semaine prochaine je me concentrerai sur trois priorités : terminer le site du restaurant, envoyer les factures aux anciens clients, et chercher de nouveaux prospects à Tel Aviv.",
+    t:"שבוע הבא אתמקד בשלוש עדיפויות: לגמור את אתר המסעדה, לשלוח חשבוניות ללקוחות ותיקים, ולחפש לקוחות פוטנציאליים חדשים בתל אביב.",
+    n:"אתמקד (Hitpa'el futur) · עדיפויות = priorités · לקוחות ותיקים = anciens clients (≠ ישנים !)",
+    errs:[{w:"אתמקד על",r:"אתמקד ב",e:"להתמקד prend ב (dans/en) — pas על (sur). Calque fautif du français."},{w:"לקוחות ישנים",r:"לקוחות ותיקים",e:"ישן = vieux (âge). ותיק = ancien dans un rôle. TOUJOURS ותיקים pour 'anciens clients'."}]},
+    {s:"Si j'avais plus de temps, j'écrirais des articles de blog toutes les semaines pour améliorer le référencement naturel du site.",
+    t:"לו היה לי יותר זמן, הייתי כותבת מאמרי בלוג כל שבוע כדי לשפר את הקידום האורגני של האתר.",
+    n:"לו + passé = irréel présent · הייתי כותבת = j'écrirais · קידום אורגני = référencement naturel/SEO organique",
+    errs:[{w:"אילו היה לי",r:"לו היה לי",e:"Situation actuelle irréelle (elle n'a pas de temps maintenant) → לו. אילו serait pour 'si j'avais eu' (passé révolu)."},{w:"לשפר הקידום",r:"לשפר את הקידום",e:"Objet direct défini : הקידום (avec ה) → את obligatoire."}]},
+    {s:"Dans tous les cas, je vous enverrai le contrat signé par email d'ici vendredi soir au plus tard.",
+    t:"בכל מקרה, אשלח לכם את ההסכם החתום במייל עד ליל שישי לכל המאוחר.",
+    n:"בכל מקרה = dans tous les cas · אשלח (Pa'al futur) · ליל שישי = vendredi soir · לכל המאוחר = au plus tard",
+    errs:[{w:"עד שישי בערב",r:"עד ליל שישי",e:"ליל שישי = vendredi soir (expression idiomatique hébr.). שישי בערב fonctionne aussi mais est moins précis."},{w:"אשלח לכן",r:"אשלח לכם",e:"לכם = à vous (m.pl.). לכן = à vous (f.pl.). Dans un contexte pro neutre : לכם."}]},
+    {s:"Dommage que tu n'aies pas pu venir à la présentation — tous les clients ont été très impressionnés par nos nouvelles solutions.",
+    t:"חבל שלא יכולת להגיע למצגת — כל הלקוחות התרשמו מאוד מהפתרונות החדשים שלנו.",
+    n:"חבל ש + passé = dommage que · התרשמו = ont été impressionnés (Hitpa'el passé pl.) · מצגת = présentation",
+    errs:[{w:"חבל שלא הצלחת",r:"חבל שלא יכולת",e:"Ne pas pouvoir = לא יכולת. Ne pas réussir (à) = לא הצלחת. Nuance : empêchement externe vs. échec."},{w:"הלקוחות רשמו",r:"הלקוחות התרשמו",e:"להתרשם (Hitpa'el) = être impressionné. לרשום (Pa'al) = noter/écrire. Binyan différent, sens complètement différent."}]},
+    {s:"Supposons que le client accepte toutes nos conditions — quel serait le délai de livraison réaliste ?",
+    t:"נניח שהלקוח מסכים לכל התנאים שלנו — מהו לוח הזמנים הריאלי למסירה?",
+    n:"נניח ש = supposons que · מסכים = accepte/est d'accord · לוח זמנים = planning/calendrier · מסירה = livraison",
+    errs:[{w:"נניח שהלקוח יסכים",r:"נניח שהלקוח מסכים",e:"Après נניח ש, on utilise le présent (מסכים) même si l'action est hypothétiquement future."},{w:"מה הוא זמן המסירה",r:"מהו לוח הזמנים למסירה",e:"לוח זמנים = planning/échéancier. מהו = qu'est-ce que (contraction de מה הוא, registre formel)."}]},
+    {s:"Je pense qu'ils arriveront en retard — il y a dix contre un qu'ils ont encore un problème technique.",
+    t:"אני חושבת שהם יגיעו מאוחר — עשרה לאחד שיש להם עוד בעיה טכנית.",
+    n:"יגיעו (Hif'il futur) · עשרה לאחד = dix contre un (expression idiom.) · עוד בעיה = encore un problème",
+    errs:[{w:"עשר לאחד",r:"עשרה לאחד",e:"עשרה est le nombre féminin (10 avec noun féminin ou absolu). L'expression fixe est עשרה לאחד."},{w:"שיש להם בעיה עוד",r:"שיש להם עוד בעיה",e:"L'adverbe עוד se place AVANT le nom qu'il modifie : עוד בעיה = encore un problème."}]},
+    {s:"Si on continue dans cette direction, on atteindra nos objectifs financiers avant la fin de l'année.",
+    t:"אם נמשיך באותו כיוון, נגיע ליעדים הכספיים שלנו לפני סוף השנה.",
+    n:"אם + futur = conditionnel réel · נמשיך (Hif'il futur) · יעדים כספיים = objectifs financiers",
+    errs:[{w:"אם נמשיך בכיוון הזה",r:"אם נמשיך באותו כיוון",e:"באותו כיוון = dans la même direction (expression idiomatique). בכיוון הזה fonctionne aussi mais est moins idiomatique."},{w:"נשיג יעדינו",r:"נגיע ליעדים שלנו",e:"להגיע ל = atteindre (intransitif + ל). להשיג (Hif'il) = réaliser/obtenir. Les deux marchent mais sens légèrement différent."}]},
+    {s:"Entretemps, pendant qu'on attend leur décision, je vais préparer deux alternatives à présenter.",
+    t:"בינתיים, בזמן שאנחנו מחכים להחלטה שלהם, אני אכין שתי חלופות להציג.",
+    n:"בינתיים = entretemps · בזמן ש = pendant que · אכין (Hif'il futur f.) · חלופות = alternatives",
+    errs:[{w:"אני אכינה",r:"אני אכין",e:"Futur Hif'il 1ère sg. — toujours אכין, jamais אכינה. La 1ère pers. ne prend pas le ה féminin au futur."},{w:"בזמן שאנחנו מחכות",r:"בזמן שאנחנו מחכים",e:"Dans un contexte pro mixte ou inconnu : forme masculine par défaut מחכים."}]},
+    {s:"Il y a un doute sérieux sur la faisabilité de ce projet dans les délais impartis.",
+    t:"יש ספק רציני לגבי הישימות של הפרויקט הזה במסגרת הזמנים שנקבעו.",
+    n:"ספק = doute · ישימות = faisabilité · במסגרת הזמנים = dans les délais · שנקבעו = impartis (Nif'al passé pl.)",
+    errs:[{w:"ספק על",r:"ספק לגבי",e:"ספק + לגבי = doute sur/concernant. לגבי est la préposition correcte ici (≠ על ou ב)."},{w:"בגבולות הזמן",r:"במסגרת הזמנים",e:"במסגרת = dans le cadre de / dans les délais de. בגבולות = dans les limites de (physique/abstrait). Ici במסגרת הזמנים est l'expression standard."}]}
+  ]},
+  3:{dir:"heb2fr",title:"10 Traductions HEB → FR — Débrouillardise et idiomes",items:[
+    {s:"היא הסתדרה לגמרי לבד עם כל הניירת של הרישום כעוסקת מורשה. מה פתאום שנעזור לה — היא לא ביקשה ולא רצתה.",
+    t:"Elle s'est complètement débrouillée seule avec toute la paperasse de l'enregistrement comme travailleuse indépendante. Pas question qu'on l'aide — elle n'a pas demandé et ne voulait pas.",
+    n:"הסתדרה (Hitpa'el passé f.) · מה פתאום ש = pas question que · עוסקת מורשה = travailleuse indépendante/osek mourche",
+    errs:[{w:"elle ne voulait pas qu'on l'aide",r:"pas question qu'on l'aide",e:"מה פתאום ש est une interjection forte de refus/indignation. Traduis l'emphase avec 'pas question'."}]},
+    {s:"דווקא עכשיו שאנחנו מנסים להתרכז על סגירת עסקאות, כל הבעיות הטכניות מצצות ובוא-בוא.",
+    t:"Justement maintenant qu'on essaie de se concentrer sur la conclusion de deals, tous les problèmes techniques surgissent les uns après les autres.",
+    n:"דווקא = justement (ironie) · מנסים להתרכז = essayons de se concentrer · מצצות ובוא-בוא = surgissent l'un après l'autre",
+    errs:[{w:"seulement maintenant",r:"justement maintenant",e:"דווקא porte l'ironie et l'insistance — 'justement' ou 'précisément' rendent la nuance."},{w:"un par un",r:"les uns après les autres",e:"ובוא-בוא = expression répétitive qui signifie 'en flux continu, l'un après l'autre'. Très courant à l'oral."}]},
+    {s:"בדיוק! זה בדיוק מה שניסיתי להסביר לך מאז הפגישה הראשונה, אבל כנראה שלא הצלחתי להסביר את עצמי מספיק טוב.",
+    t:"Exactement ! C'est précisément ce que j'essayais de t'expliquer depuis la première réunion, mais apparemment je n'ai pas réussi à m'exprimer suffisamment bien.",
+    n:"בדיוק = exactement · כנראה = apparemment/il semble que · להסביר את עצמי = m'exprimer/m'expliquer",
+    errs:[{w:"expliquer moi-même",r:"m'exprimer / m'expliquer",e:"להסביר את עצמי = m'expliquer/m'exprimer. En français on ne dit pas 'expliquer moi-même'."},{w:"depuis la première rencontre",r:"depuis la première réunion",e:"פגישה = réunion/rencontre. Dans un contexte pro : 'réunion' est plus précis."}]},
+    {s:"לפי הניסיון שלי, לקוחות שמבקשים הנחות גדולות לפני שאפילו ראו את העבודה, לא שווים את הזמן ואת האנרגיה.",
+    t:"D'après mon expérience, les clients qui demandent de grosses réductions avant même d'avoir vu le travail ne valent pas le temps ni l'énergie qu'on y investit.",
+    n:"לפי הניסיון שלי = d'après mon expérience · לא שווים את הזמן = ne valent pas le temps",
+    errs:[{w:"ne valent pas le temps",r:"ne valent pas le temps qu'on y consacre",e:"לא שווים את הזמן = ne valent pas le temps — en français pro on précise souvent 'le temps et l'énergie qu'on y investit'."},{w:"avant de voir",r:"avant même d'avoir vu",e:"אפילו ראו = même vu. 'Avant même d'avoir vu' rend l'emphase de אפילו."}]},
+    {s:"כלומר, אם אנחנו מסכימים על המחיר עכשיו, אני מתחילה לעבוד כבר ביום שני ומסיימת עד יום שישי.",
+    t:"C'est-à-dire que si on se met d'accord sur le prix maintenant, je commence à travailler dès lundi et je termine d'ici vendredi.",
+    n:"כלומר = c'est-à-dire · מסכימים על = se mettre d'accord sur · כבר ביום שני = dès lundi",
+    errs:[{w:"autrement dit",r:"c'est-à-dire",e:"כלומר = c'est-à-dire. Les deux ('autrement dit' et 'c'est-à-dire') fonctionnent, mais כלומר est plus souvent traduit par 'c'est-à-dire'."},{w:"dès le lundi",r:"dès lundi",e:"En français, pas d'article défini avec 'dès lundi/dès vendredi' dans ce contexte."}]},
+    {s:"בשום אופן לא נסכים לפרויקט ללא חוזה כתוב ומפורט. זה לא עניין של חוסר אמון, אלא עניין של סדר ובהירות.",
+    t:"En aucun cas nous n'accepterons un projet sans contrat écrit et détaillé. Ce n'est pas une question de manque de confiance, mais une question d'ordre et de clarté.",
+    n:"בשום אופן לא = en aucun cas · חוזה = contrat · חוסר אמון = manque de confiance · בהירות = clarté",
+    errs:[{w:"nous n'acceptons pas",r:"nous n'accepterons pas",e:"לא נסכים = futur négatif. 'N'accepterons pas' rend le caractère définitif et futur."},{w:"ce n'est pas manque de confiance",r:"ce n'est pas une question de manque de confiance",e:"In Hebrew עניין של = une question de / une affaire de. En français la construction est 'une question de'."}]},
+    {s:"התרשמתי מאוד מהדרך שבה היא מנהלת את הצוות שלה — בוחרת אנשים נכונים, נותנת להם אוטונומיה, ויוצרת אווירה של אמון.",
+    t:"J'ai été très impressionnée par la façon dont elle gère son équipe — elle choisit les bonnes personnes, leur donne de l'autonomie, et crée une atmosphère de confiance.",
+    n:"התרשמתי = j'ai été impressionnée (Hitpa'el passé) · בוחרת/נותנת/יוצרת = présents descriptifs",
+    errs:[{w:"j'ai été très impressée",r:"j'ai été très impressionnée",e:"'Impressée' n'existe pas en français. 'Impressionnée' ou 'frappée par'."},{w:"elle fait les bonnes personnes",r:"elle choisit les bonnes personnes",e:"בוחרת = choisit (Pa'al présent f.). Pas 'fait'."}]},
+    {s:"נפצה אותך על כל העיכובים עם חודש תמיכה נוסף בחינם. זה הדבר הנכון לעשות, ואנחנו עומדים מאחורי העבודה שלנו.",
+    t:"Nous te compenserons pour tous les retards avec un mois de support supplémentaire gratuit. C'est la bonne chose à faire, et nous sommes derrière notre travail.",
+    n:"נפצה (Pi'el futur) · עיכובים = retards · בחינם = gratuitement/gratuit · עומדים מאחורי = sommes derrière/soutenons",
+    errs:[{w:"nous allons te compenser",r:"nous te compenserons",e:"Futur simple en hébreu → futur simple en français, pas périphraste avec 'aller'."},{w:"nous soutenons notre travail",r:"nous sommes derrière notre travail / nous assumons notre travail",e:"עומדים מאחורי = 'se tenir derrière' = soutenir, assumer la responsabilité de."}]},
+    {s:"לגמור את הסיפור הזה היום — זה בדיוק מה שאנחנו צריכים. יש לנו ספק אם ניתן להאריך את המועד עוד פעם.",
+    t:"En finir avec ça aujourd'hui — c'est précisément ce qu'il nous faut. On a des doutes sur la possibilité de repousser encore une fois l'échéance.",
+    n:"לגמור את הסיפור = en finir avec ça (idiome) · ספק אם = doute si/sur · להאריך = prolonger · מועד = échéance",
+    errs:[{w:"finir cette histoire",r:"en finir avec ça",e:"לגמור את הסיפור est idiomatique — 'en finir avec ça' ou 'clore le dossier' rendent mieux que 'finir cette histoire'."},{w:"doute si possible",r:"doute sur la possibilité de",e:"ספק אם ניתן = doute sur le fait que c'est possible. 'Sur la possibilité de' est plus élégant en français."}]},
+    {s:"על הדרך, קניתי לך את הקפה שאתה אוהב. זה לא כלום, רק רציתי להראות שאני מעריכה את המאמץ שלך.",
+    t:"En passant, je t'ai acheté le café que tu aimes. Ce n'est rien, je voulais juste montrer que j'apprécie ton effort.",
+    n:"על הדרך = en passant/au passage · זה לא כלום = ce n'est rien · מעריכה (Hif'il présent f.)",
+    errs:[{w:"en chemin",r:"en passant / au passage",e:"על הדרך = en passant. 'En chemin' peut aussi marcher mais 'en passant' est plus idiomatique."},{w:"je voulais seulement montrer",r:"je voulais juste montrer",e:"רק = juste/seulement. En français courant 'juste' est plus naturel que 'seulement' dans ce contexte."}]}
+  ]},
+  4:{dir:"mixed",title:"10 Traductions mixtes — Révision intensive",items:[
+    {s:"Malgré les difficultés des premiers mois, j'ai réussi à me faire une place sur le marché israélien grâce à une communication directe et une réactivité exemplaire.",
+    t:"למרות הקשיים של החודשים הראשונים, הצלחתי לפלס לי דרך בשוק הישראלי הודות לתקשורת ישירה ולמהירות תגובה מופתית.",
+    n:"למרות = malgré · לפלס דרך = se frayer un chemin · הודות ל = grâce à · מהירות תגובה = réactivité",
+    errs:[{w:"הצלחתי למצוא מקום",r:"הצלחתי לפלס לי דרך",e:"לפלס דרך = se frayer un chemin (idiome). Plus précis et idiomatique que 'trouver une place'."},{w:"הודות לתקשורת",r:"הודות לתקשורת ישירה",e:"Ne pas oublier ישירה = directe. L'adjectif suit le nom en hébreu."}]},
+    {s:"שלחתי ללקוחות ותיקים הצעה מיוחדת לחידוש ההסכם. רובם הגיבו בחיוב, ושניים אף ביקשו להרחיב את השירות לאתר נוסף.",
+    t:"J'ai envoyé aux anciens clients une proposition spéciale pour le renouvellement du contrat. La plupart ont répondu favorablement, et deux ont même demandé à étendre le service à un site supplémentaire.",
+    n:"ותיקים = anciens (long terme) · חידוש = renouvellement · הגיבו בחיוב = ont répondu favorablement · אף = même",
+    errs:[{w:"vieux clients",r:"anciens clients",e:"ותיקים ≠ ישנים. ותיק = expérimenté/ancien dans son rôle. JAMAIS 'vieux' pour des personnes."},{w:"ont répondu positivement",r:"ont répondu favorablement",e:"בחיוב = in the affirmative / favorablement. 'Favorablement' est plus élégant en contexte pro."}]},
+    {s:"Si on avait lancé la campagne WhatsApp deux semaines plus tôt, on aurait atteint beaucoup plus de prospects avant la concurrence.",
+    t:"אילו השקנו את קמפיין הווטסאפ שבועיים קודם, היינו מגיעים להרבה יותר לקוחות פוטנציאליים לפני המתחרים.",
+    n:"אילו + passé = irréel passé · השקנו = nous avons lancé (Hif'il passé pl.) · היינו מגיעים = nous aurions atteint",
+    errs:[{w:"לו השקנו",r:"אילו השקנו",e:"Irréel PASSÉ (2 semaines plus tôt = passé révolu) → אילו. לו = irréel présent."},{w:"היינו יכולים להגיע",r:"היינו מגיעים",e:"Structure conditionnel passé : היינו + participe présent. Pas besoin de יכולים ici."}]},
+    {s:"אנחנו מחויבים לספק שירות מהמדרגה הראשונה, בלי קשר לגודל ולתקציב של הלקוח.",
+    t:"Nous nous engageons à fournir un service de première qualité, indépendamment de la taille et du budget du client.",
+    n:"מחויבים ל = nous engageons à · מהמדרגה הראשונה = de première qualité · בלי קשר ל = indépendamment de",
+    errs:[{w:"sans rapport à",r:"indépendamment de",e:"בלי קשר ל = sans rapport avec / indépendamment de. 'Sans rapport à' n'est pas idiomatique en français."},{w:"nous sommes obligés de",r:"nous nous engageons à",e:"מחויב ל = engagé à (volontaire). 'Obligés de' impliquerait une contrainte externe."}]},
+    {s:"Nous ne pouvons pas nous permettre de perdre ce client — c'est l'une de nos références les plus importantes sur le marché.",
+    t:"אנחנו לא יכולים להרשות לעצמנו לאבד את הלקוח הזה — הוא אחת ממדינות ייחוס הכי חשובות שלנו בשוק.",
+    t:"אנחנו לא יכולים להרשות לעצמנו לאבד את הלקוח הזה — הוא אחת מהמקרי הייחוס הכי חשובים שלנו בשוק.",
+    n:"להרשות לעצמנו = se permettre · לאבד = perdre · מקרה ייחוס = référence/case study",
+    errs:[{w:"אחת מהייחוסים",r:"אחד ממקרי הייחוס",e:"מקרה ייחוס = référence (cas de référence). Masculin → אחד (pas אחת)."},{w:"הכי חשוב",r:"הכי חשובים",e:"Accord avec le pluriel מקרי — הכי חשובים (pl.) et non הכי חשוב (sg.)."}]},
+    {s:"ההחלטה שלי להשקיע בנוכחות מקוונת הייתה ההחלטה הנכונה ביותר שלי מאז שעליתי לארץ.",
+    t:"Ma décision d'investir dans une présence en ligne a été ma meilleure décision depuis que je suis arrivée en Israël.",
+    n:"ההחלטה שלי = ma décision · הנכונה ביותר = la meilleure/la plus juste · מאז שעליתי לארץ = depuis que je suis montée au pays (aliyah)",
+    errs:[{w:"la plus correcte",r:"la meilleure",e:"הנכונה ביותר peut se traduire 'la plus correcte' ou 'la meilleure' — en contexte 'la meilleure' est plus naturel en français."},{w:"depuis que je suis venue en Israël",r:"depuis que je suis montée en Israël / depuis mon aliyah",e:"עליתי לארץ = j'ai fait l'aliyah / je suis montée au pays. Terme spécifique à l'immigration en Israël."}]},
+    {s:"I want to apologize — this was my responsibility and I should have addressed this sooner.",
+    t:"אני רוצה להתנצל — זו הייתה האחריות שלי ואני הייתי צריכה לטפל בזה מוקדם יותר.",
+    n:"להתנצל = s'excuser (Hitpa'el) · אחריות = responsabilité · לטפל ב = s'occuper de",
+    errs:[{w:"להתנצל על זה",r:"להתנצל (sans complément ici)",e:"להתנצל peut s'utiliser sans complément (s'excuser en général) ou avec על + sujet: להתנצל על האיחור."},{w:"הייתי צריך",r:"הייתי צריכה",e:"S'accorder en genre — locutrice féminine → צריכה (f.)."}]},
+    {s:"בכל הנוגע לנושא התשלומים, אנחנו בודקים את הבעיה ונחזור אליכם עם פתרון תוך עשרים וארבע שעות.",
+    t:"En ce qui concerne la question des paiements, nous examinons le problème et reviendrons vers vous avec une solution dans les vingt-quatre heures.",
+    n:"בכל הנוגע ל = en ce qui concerne · בודקים = examinons · נחזור = nous reviendrons (Pa'al futur)",
+    errs:[{w:"concernant les paiements",r:"en ce qui concerne la question des paiements",e:"בכל הנוגע ל est une locution formelle complète — en français pro 'en ce qui concerne' est l'équivalent exact."},{w:"dans 24 heures",r:"dans les vingt-quatre heures",e:"תוך + durée = dans + durée. 'Dans les 24 heures' avec l'article est plus précis."}]},
+    {s:"Alessia m'a beaucoup aidée à comprendre les codes culturels israéliens, notamment l'importance de la communication directe et du contact humain.",
+    t:"אלסיה עזרה לי מאוד להבין את הקודים התרבותיים הישראליים, ובעיקר את החשיבות של התקשורת הישירה והמגע האנושי.",
+    n:"עזרה לי = m'a aidée · ובעיקר = notamment · חשיבות = importance · מגע אנושי = contact humain",
+    errs:[{w:"עזרה אותי",r:"עזרה לי",e:"לעזור prend la préposition ל (lamed + pronom) : עזרה לי, עוזרת לך, עזרנו להם. JAMAIS avec את."},{w:"ובמיוחד",r:"ובעיקר",e:"בעיקר = principalement/notamment. בעיוחד = spécialement/particulièrement. Nuance fine — ובעיקר est plus adapté ici."}]},
+    {s:"Le travail de cette semaine m'a appris que la persévérance et la flexibilité sont les deux qualités les plus importantes pour un entrepreneur.",
+    t:"העבודה של השבוע הזה לימדה אותי שהתמדה וגמישות הן שתי התכונות החשובות ביותר ליזם.",
+    n:"לימדה אותי = m'a appris (Pi'el passé f.) · התמדה = persévérance · גמישות = flexibilité · תכונות = qualités",
+    errs:[{w:"העבודה לימדה לי",r:"העבודה לימדה אותי",e:"ללמד = enseigner/apprendre à quelqu'un. Verbe transitif double : לימדה + objet direct (אותי) + complément (ש...). Jamais לי ici."},{w:"שתי תכונות הכי חשובות",r:"שתי התכונות החשובות ביותר",e:"Superlatif hébreu : ה + adj + ביותר (pas הכי en registre formel). Et n'oublie pas l'article sur תכונות : התכונות."}]}
+  ]}
+};
+
+// ============================================================
+// AUDIO TEXTS (long complex sentences)
+// ============================================================
+const AUD={
+  0:[
+    {t:"אתמול שלחתי הצעת מחיר מפורטת ללקוח חדש שפנה אלינו דרך האתר. עדיין לא קיבלתי תשובה, אבל אני מקווה שישיב מחר בבוקר לכל המאוחר. בכל זאת, אני ממשיכה לעבוד על הפרויקטים האחרים בינתיים ולא מחכה.",f:"Hier j'ai envoyé un devis détaillé à un nouveau client qui nous a contactés via le site. Je n'ai toujours pas reçu de réponse, mais j'espère qu'il répondra demain matin au plus tard. Néanmoins, je continue à travailler sur les autres projets entretemps et n'attends pas."},
+    {t:"דווקא עכשיו שאנחנו בשיא הפעילות ויש לנו שלושה פרויקטים במקביל, כל הלקוחות הישנים מתחילים להתקשר ולבקש עדכונים ושינויים נוספים. בכל זאת, זה סימן טוב שיש לנו לקוחות ותיקים שמאמינים בנו.",f:"Justement maintenant qu'on est au pic d'activité avec trois projets en parallèle, tous les anciens clients commencent à appeler pour demander des mises à jour et des modifications supplémentaires. C'est quand même un bon signe qu'on a des clients fidèles qui nous font confiance."},
+    {t:"אני לא מצליחה להיזכר אם שלחתי ללקוח הראשון את קישור לאתר הדמו, ואני לא רוצה להתעכב יותר מדי על הנושא הזה. בכל מקרה, אשלח לו הכל מחר בבוקר עם סיכום מלא של כל מה שסיכמנו.",f:"Je n'arrive pas à me souvenir si j'ai envoyé au premier client le lien vers le site démo, et je ne veux pas traîner trop longtemps sur ce sujet. Dans tous les cas, je lui enverrai tout demain matin avec un résumé complet de tout ce qu'on a convenu."}
+  ],
+  1:[
+    {t:"ניסיתי לשכנע אותו שלוש פעמים שהמחיר שאנחנו מציעים מוצדק ומשקף את האיכות של העבודה, אבל הוא עמד על כך שהתקציב שלו מוגבל ואי אפשר להגמיש אותו בשום אופן.",f:"J'ai essayé de le convaincre trois fois que le prix qu'on propose est justifié et reflète la qualité du travail, mais il a insisté sur le fait que son budget est limité et ne peut en aucun cas être assoupli."},
+    {t:"יש לי תנאי אחד בלבד לפני שנחתום על ההסכם — אני רוצה לוודא שכל הפרטים הטכניים מוסדרים בכתב ואין מקום לפרשנויות שונות שיגרמו לאי הבנות מאוחר יותר.",f:"J'ai une seule condition avant qu'on signe l'accord — je veux m'assurer que tous les détails techniques sont consignés par écrit et qu'il n'y a pas de place pour des interprétations différentes qui engendreraient des malentendus plus tard."},
+    {t:"מעבר לזה שהמחיר שלנו תחרותי מאוד ביחס לשוק, אנחנו גם מציעים ערבות שביעות רצון של שלושים יום עם החזר כסף מלא, מה שמבטיח לך שאין סיכון בעסקה הזו.",f:"Au-delà du fait que notre prix est très compétitif par rapport au marché, nous offrons également une garantie de satisfaction de trente jours avec remboursement intégral, ce qui vous assure qu'il n'y a aucun risque dans cette transaction."}
+  ],
+  2:[
+    {t:"אילו ידעתי מלכתחילה כמה זמן ואנרגיה יידרשו ממני כדי להבין את הבירוקרטיה הישראלית, הייתי מכינה תוכנית עבודה שונה לחלוטין לשלושת החודשים הראשונים.",f:"Si j'avais su dès le départ combien de temps et d'énergie il me faudrait pour comprendre la bureaucratie israélienne, j'aurais préparé un plan de travail complètement différent pour les trois premiers mois."},
+    {t:"שבוע הבא אתמקד בשלושה יעדים ספציפיים: לסגור שני לקוחות חדשים לפחות, לשלוח מאה ועשרים הודעות ווטסאפ לעסקים בתל אביב, ולפגוש את אלסיה לסיכום שבועי מפורט של כל הפעילות.",f:"La semaine prochaine je me concentrerai sur trois objectifs spécifiques : conclure au moins deux nouveaux clients, envoyer cent vingt messages WhatsApp aux entreprises de Tel Aviv, et rencontrer Alessia pour un bilan hebdomadaire détaillé de toute l'activité."},
+    {t:"לו יכולתי לחזור בזמן ולדבר עם עצמי לפני שהתחלתי, הייתי אומרת לה: 'גדרי את מספר השינויים מראש, קבעי מחיר גבוה יותר מהמינימום שאת מוכנה לקבל, ואל תפחדי לגיד לא ללקוחות שאינם מתאימים לך.'",f:"Si je pouvais remonter le temps et me parler avant que je commence, je lui dirais : 'Délimite le nombre de modifications à l'avance, fixe un prix plus élevé que le minimum que tu es prête à accepter, et n'aie pas peur de dire non aux clients qui ne te correspondent pas.'"}
+  ],
+  3:[
+    {t:"בשוק הכרמל תמיד מתמקחים — זה חלק מהחוויה הישראלית האותנטית. לפי הניסיון שלי, אם מתחילים מהצעת מחיר גבוהה ב-40% ממה שרוצים בסוף, בדרך כלל מגיעים לתוצאה הרצויה אחרי קצת משא ומתן.",f:"Au marché Carmel on marchande toujours — c'est une partie de l'expérience israélienne authentique. D'après mon expérience, si on commence avec un prix 40% plus élevé que ce qu'on veut au final, on arrive généralement au résultat souhaité après quelques négociations."},
+    {t:"בדיוק! זה בדיוק מה שניסיתי להסביר לכם בפגישה הקודמת, אבל כנראה שלא הסברתי את עצמי מספיק טוב. בשום אופן לא נסכים לשנות את הפרויקט אחרי החתימה ללא תוספת תשלום מוסכמת מראש.",f:"Exactement ! C'est précisément ce que j'ai essayé de vous expliquer lors de la réunion précédente, mais apparemment je ne me suis pas bien expliquée. En aucun cas nous n'accepterons de modifier le projet après la signature sans supplément de paiement convenu à l'avance."},
+    {t:"לפי הניסיון שלי, לקוחות שמבקשים הנחות גדולות לפני שבכלל ראו את העבודה, בדרך כלל לא שווים את הזמן ואת האנרגיה. עדיף להשקיע את הזמן בלקוחות שמעריכים איכות ומוכנים לשלם עליה.",f:"D'après mon expérience, les clients qui demandent de grosses réductions avant même d'avoir vu le travail ne valent généralement pas le temps ni l'énergie. Mieux vaut investir son temps dans des clients qui apprécient la qualité et sont prêts à la payer."}
+  ],
+  4:[
+    {t:"השבוע למדתי שצריך לקבוע גבולות ברורים מאוד עם לקוחות מההתחלה ולא לחכות לרגע שהם יעברו אותם. בשום אופן לא נסכים לשינויים ללא תוספת תשלום, ויש לכלול זאת בכל הסכם שאנחנו חותמים.",f:"Cette semaine j'ai appris qu'il faut établir des limites très claires avec les clients dès le départ et ne pas attendre qu'ils les franchissent. En aucun cas nous n'accepterons des modifications sans supplément de paiement, et cela doit être inclus dans chaque accord que nous signons."},
+    {t:"התרשמתי מאוד מהדרך שבה היא ניהלה את המשא ומתן — ישירה, ברורה, ובלי לוותר על שום דבר מהותי. כלומר, היא הצליחה לשמור על כל קווי האדום שלה ועדיין לסגור את העסקה בהצלחה.",f:"J'ai été très impressionnée par la façon dont elle a mené la négociation — directe, claire, et sans céder sur rien d'essentiel. C'est-à-dire qu'elle a réussi à maintenir toutes ses lignes rouges et quand même conclure le deal avec succès."},
+    {t:"לפי הניסיון שלי, כדאי תמיד להשקיע בלקוחות שמעריכים איכות ולא רק מחפשים את הזול ביותר. לקוחות כאלה נוטים לחזור, להמליץ, ולהביא פרויקטים מורכבים יותר שמשלמים טוב יותר.",f:"D'après mon expérience, il vaut toujours la peine d'investir dans des clients qui apprécient la qualité et ne cherchent pas seulement ce qui est le moins cher. Ces clients ont tendance à revenir, à recommander, et à apporter des projets plus complexes qui paient mieux."}
+  ]
+};
+
+// ================================================================
+// STATE
+// ================================================================
+let ST={week:wk(),days:{},vocab:{},curDay:0,curEx:0,exSc:{},errs:[],secs:0,ti:null};
+let FS={cards:[],i:0,k:0,u:0};
+let CQ={data:null,i:0,r:0,ans:false};
+let spd=0.75;
+let utt=null;
+
+function wk(){const d=new Date(),j=new Date(d.getFullYear(),0,1);return d.getFullYear()+'-W'+Math.ceil(((d-j)/86400000+j.getDay()+1)/7);}
+function ld(){const s=localStorage.getItem('hb_v4');if(s){const p=JSON.parse(s);if(p.week===ST.week)ST={...ST,...p};}}
+function sv(){localStorage.setItem('hb_v4',JSON.stringify({week:ST.week,days:ST.days,vocab:ST.vocab}));}
+ld();
+
+window.addEventListener('DOMContentLoaded',()=>{renderHome();renderStats();buildDots();});
+
+function gv(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  document.getElementById('v'+id).classList.add('on');
+  document.getElementById('nb-'+id).classList.add('on');
+  if(id==='st')renderStats();
+}
+
+// HOME
+const DN=['Dim','Lun','Mar','Mer','Jeu'];
+function renderHome(){
+  const g=document.getElementById('wg');g.innerHTML='';
+  const dow=new Date().getDay(),td=[0,1,2,3,4].indexOf(dow)>=0?[0,1,2,3,4].indexOf(dow):0;
+  DMETA.forEach((d,i)=>{
+    const done=ST.days[i]?.completed,now=i===td,sc=ST.days[i]?.score||0;
+    g.innerHTML+=`<div class="dc ${done?'done':now?'now':''}" onclick="startSession(${i})">
+      <div class="dc-d">${DN[i]}</div>
+      <div class="dc-t">${d.title}</div>
+      <div class="dc-f">${d.focus}</div>
+      <div class="dc-s" style="color:${sc>=80?'var(--ok)':sc>0?'var(--warn)':'var(--line)'}">${sc?sc+'%':'—'}</div>
+      ${done?'<div class="dc-b">✓</div>':now?'<div class="dc-b">▶</div>':''}
+    </div>`;
+  });
+  const done=Object.values(ST.days).filter(d=>d.completed).length;
+  const scores=Object.values(ST.days).filter(d=>d.score).map(d=>d.score);
+  const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b)/scores.length):0;
+  const te=Object.values(ST.days).reduce((a,d)=>a+(d.ec||0),0);
+  document.getElementById('s0').textContent=done;
+  document.getElementById('s1').textContent=Object.keys(ST.vocab).length;
+  document.getElementById('s2').textContent=avg?avg+'%':'—';
+  document.getElementById('s3').textContent=te;
+}
+
+function startToday(){
+  const dow=new Date().getDay(),td=[0,1,2,3,4].indexOf(dow)>=0?[0,1,2,3,4].indexOf(dow):0;
+  startSession(td);
+}
+
+function buildDots(){
+  const c=document.getElementById('dts');c.innerHTML='';
+  const dow=new Date().getDay(),t=[0,1,2,3,4].indexOf(dow)>=0?[0,1,2,3,4].indexOf(dow):0;
+  for(let i=0;i<5;i++){const d=document.createElement('div');d.className='dot'+(ST.days[i]?.completed?' done':i===t?' now':'');c.appendChild(d);}
+}
+
+// SESSION
+const EXS=[
+  {t:'flash',l:'Vocabulaire (10 mots)',ic:'🃏',d:'~12 min'},
+  {t:'lesson',l:'Cours de grammaire',ic:'📚',d:'~10 min'},
+  {t:'conj',l:'Conjugaison (10 quiz)',ic:'📋',d:'~10 min'},
+  {t:'audio',l:'Écoute (phrases longues)',ic:'🎧',d:'~10 min'},
+  {t:'fill',l:'Remplis les blancs',ic:'✏️',d:'~8 min'},
+  {t:'read',l:'Lecture (200+ mots)',ic:'📖',d:'~12 min'},
+  {t:'trans',l:'10 Traductions + analyse',ic:'🔄',d:'~18 min'},
+  {t:'sum',l:'Bilan',ic:'✅',d:''}
+];
+
+function startSession(day){
+  ST.curDay=day;ST.curEx=0;ST.exSc={};ST.errs=[];ST.secs=0;
+  gv('s');
+  document.getElementById('sb-dt').textContent=`Jour ${day+1} — ${DMETA[day].focus}`;
+  renderEList();loadEx(0);startTimer();
+}
+
+function renderEList(){
+  const el=document.getElementById('elist');el.innerHTML='';
+  EXS.forEach((ex,i)=>{
+    const done=ST.exSc[i]!==undefined,on=i===ST.curEx;
+    el.innerHTML+=`<div class="ei ${on?'on':''} ${done?'ok':''}" id="ei${i}" onclick="loadEx(${i})">
+      <span class="ei-ic">${ex.ic}</span><span>${ex.l}</span>
+      <span class="ei-t">${done?ST.exSc[i]+'%':ex.d}</span>
+    </div>`;
+  });
+  updP();
+}
+
+function updP(){
+  const tot=EXS.length-1,done=Object.keys(ST.exSc).length;
+  const p=Math.round(done/tot*100);
+  document.getElementById('ptxt').textContent=done+'/'+tot;
+  document.getElementById('ppct').textContent=p+'%';
+  document.getElementById('pfill').style.width=p+'%';
+}
+
+function startTimer(){
+  if(ST.ti)clearInterval(ST.ti);
+  ST.ti=setInterval(()=>{
+    ST.secs++;
+    const m=String(Math.floor(ST.secs/60)).padStart(2,'0'),s=String(ST.secs%60).padStart(2,'0');
+    document.getElementById('tmr').textContent=m+':'+s;
+  },1000);
+}
+
+function loadEx(idx){
+  ST.curEx=idx;
+  document.querySelectorAll('.ei').forEach((el,i)=>el.classList.toggle('on',i===idx));
+  const ea=document.getElementById('ea'),d=ST.curDay;
+  const map={flash:()=>buildFlash(d),lesson:()=>buildLesson(d),conj:()=>buildConj(d),audio:()=>buildAudio(d),fill:()=>buildFill(d),read:()=>buildRead(d),trans:()=>buildTrans(d),sum:()=>buildSum()};
+  ea.innerHTML=map[EXS[idx].t]();
+  if(EXS[idx].t==='flash')initFlash();
+  if(EXS[idx].t==='conj')initCQ();
+  if(EXS[idx].t==='fill')initFill();
+  if(EXS[idx].t==='read')initRead();
+}
+
+function nxt(score){
+  ST.exSc[ST.curEx]=score||100;
+  renderEList();
+  const nx=ST.curEx+1;
+  if(nx<EXS.length)loadEx(nx);
+}
+
+// FLASHCARDS
+function buildFlash(d){
+  return `<div>
+    <div class="tag">Vocabulaire · 10 mots B1</div>
+    <h2 class="etitle">Mots & expressions — Jour ${d+1}</h2>
+    <p class="esub">Racine · Binyan · Usage · Nuances de registre. Sois honnête.</p>
+    <div class="fprog" id="fp">Chargement…</div>
+    <div id="fdeck"></div>
+  </div>`;
+}
+function initFlash(){
+  FS={cards:[...VOC[ST.curDay]].sort(()=>Math.random()-.5),i:0,k:0,u:0};
+  showFC();
+}
+function showFC(){
+  if(FS.i>=FS.cards.length){endFlash();return;}
+  const c=FS.cards[FS.i];
+  document.getElementById('fp').textContent=`${FS.i+1}/${FS.cards.length} · Connus: ${FS.k} · À revoir: ${FS.u}`;
+  document.getElementById('fdeck').innerHTML=`
+    <div class="fc" onclick="revealFC()" id="fcrd">
+      <div class="fc-h">${c.h}</div>
+      <div class="fc-n">${c.r!=='—'?'Racine : '+c.r+' · ':''}</div>
+      <div class="fc-n" style="margin-top:4px">↓ Cliquer pour révéler</div>
+      <div class="fcr" id="fcr">
+        <div class="fc-fr">${c.f}</div>
+        <div class="fc-ph">${c.p}</div>
+        <div class="fc-ex">
+          <span class="fc-exh">${c.ex}</span>
+          <span class="fc-exf">${c.ef}</span>
+        </div>
+        <div class="fc-nt">${c.n}</div>
+      </div>
+    </div>
+    <div class="fca" id="fca" style="display:none">
+      <button class="fa fa-u" onclick="fcA(false)">✗ À revoir</button>
+      <button class="fa fa-k" onclick="fcA(true)">✓ Je savais</button>
+    </div>`;
+}
+function revealFC(){
+  const r=document.getElementById('fcr');if(r.classList.contains('show'))return;
+  r.classList.add('show');document.getElementById('fca').style.display='flex';
+}
+function fcA(k){
+  const c=FS.cards[FS.i];if(k)FS.k++;else FS.u++;
+  if(!ST.vocab[c.h])ST.vocab[c.h]={f:c.f,k:0,u:0};
+  if(k)ST.vocab[c.h].k++;else ST.vocab[c.h].u++;
+  FS.i++;showFC();
+}
+function endFlash(){
+  const p=Math.round(FS.k/FS.cards.length*100);
+  document.getElementById('fdeck').innerHTML=`<div style="text-align:center;padding:36px;background:var(--white);border:1px solid var(--line);border-radius:9px">
+    <div style="font-size:2.4rem;margin-bottom:11px">${p>=80?'🎯':p>=60?'📚':'⚠️'}</div>
+    <div style="font-size:1.3rem;font-weight:700;margin-bottom:5px">${p}% connus</div>
+    <div style="color:var(--muted);margin-bottom:22px">${FS.k}/${FS.cards.length} · ${FS.u} à retravailler</div>
+    <button class="btn btn-gold" onclick="nxt(${p})">Cours de grammaire →</button>
+  </div>`;
+  sv();
+}
+
+// LESSON
+function buildLesson(d){
+  const L=LESS[d];
+  let h=`<div>
+    <div class="tag">Cours · Grammaire dense</div>
+    <h2 class="etitle">${L.title}</h2>
+    <p class="esub">Lis chaque règle attentivement. Tu seras testée dessus immédiatement après.</p>`;
+  L.secs.forEach(s=>{
+    h+=`<div class="lb"><div class="lb-t">📌 ${s.t}</div><div class="lb-body">`;
+    if(s.body)h+=`<p>${s.body}</p>`;
+    if(s.tab){
+      h+=`<div class="rule"><div class="rule-t">${s.t}</div><div style="overflow-x:auto">
+        <table class="t"><thead><tr>${s.tab.cols.map(c=>`<th>${c}</th>`).join('')}</tr></thead><tbody>
+        ${s.tab.rows.map(r=>`<tr>${r.map((cell,i)=>i===2?`<td class="th">${cell}</td>`:`<td>${cell}</td>`).join('')}</tr>`).join('')}
+        </tbody></table></div></div>`;
+    }
+    if(s.exs){
+      h+=`<div class="rule"><div class="rule-t">Exemples</div><div class="egrid">`;
+      s.exs.forEach(e=>h+=`<div class="ecell"><span class="eh">${e.eh}</span><span class="ep">${e.ep}</span><span class="ef">${e.ef}</span></div>`);
+      h+=`</div></div>`;
+    }
+    if(s.warn)h+=`<div class="warn">${s.warn}</div>`;
+    if(s.note)h+=`<div class="note">${s.note}</div>`;
+    h+=`</div></div>`;
+  });
+  h+=`<div class="arow2"><button class="btn btn-gold" onclick="nxt(100)">Conjugaison →</button></div></div>`;
+  return h;
+}
+
+// CONJUGATION
+function buildConj(d){
+  const C=CONJS[d];
+  return `<div>
+    <div class="tag">Conjugaison · 10 questions</div>
+    <h2 class="etitle">${C.title}</h2>
+    <p class="esub">Auto-avancement 2s après chaque réponse. Chaque erreur est enregistrée.</p>
+    <div id="cq"></div>
+  </div>`;
+}
+function initCQ(){
+  CQ={data:CONJS[ST.curDay].quiz,i:0,r:0,ans:false};showCQ();
+}
+function showCQ(){
+  if(CQ.i>=CQ.data.length){endCQ();return;}
+  const q=CQ.data[CQ.i];
+  const opts=q.ch.map(c=>`<button class="opt" onclick="ansCQ(this,'${c.replace(/'/g,"\\'")}','${q.a.replace(/'/g,"\\'")}',${CQ.i})">${c}</button>`).join('');
+  document.getElementById('cq').innerHTML=`<div class="card">
+    <div class="qp">${CQ.i+1}/10 — ${q.q}</div>
+    <div class="opts" id="co">${opts}</div>
+    <div class="qfb" id="cf"></div>
+  </div>`;
+}
+function ansCQ(btn,ch,cor,idx){
+  if(CQ.ans||idx!==CQ.i)return;CQ.ans=true;
+  document.querySelectorAll('#co .opt').forEach(b=>b.disabled=true);
+  const q=CQ.data[CQ.i],fb=document.getElementById('cf');fb.classList.add('show');
+  if(ch===cor){
+    btn.classList.add('correct');fb.classList.add('ok');
+    fb.innerHTML='✓ Correct !<div class="expl">'+q.e+'</div>';CQ.r++;
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('#co .opt').forEach(b=>{if(b.textContent.trim()===cor)b.classList.add('correct');});
+    fb.classList.add('ko');
+    fb.innerHTML=`✗ Réponse : <strong style="font-family:'Noto Sans Hebrew';direction:rtl;font-size:1.05rem">${cor}</strong><div class="expl">${q.e}</div>`;
+    ST.errs.push({cat:'conjugaison',w:ch,r:cor,e:q.e});
+  }
+  setTimeout(()=>{CQ.i++;CQ.ans=false;showCQ();},2200);
+}
+function endCQ(){
+  const p=Math.round(CQ.r/10*100);
+  document.getElementById('cq').innerHTML=`<div style="text-align:center;padding:26px;background:var(--white);border:1px solid var(--line);border-radius:9px">
+    <div style="font-size:1.35rem;font-weight:700;margin-bottom:5px">${CQ.r}/10 — ${p}%</div>
+    <div style="color:var(--muted);margin-bottom:18px;font-style:italic">${p>=80?'Solide 💪':p>=60?'À consolider':'À retravailler ⚠️'}</div>
+    <button class="btn btn-gold" onclick="nxt(${p})">Écoute →</button>
+  </div>`;
+}
+
+// AUDIO
+function buildAudio(d){
+  const ts=AUD[d];
+  const items=ts.map((t,i)=>`<div class="card" style="margin-bottom:14px">
+    <div class="clbl">Phrase ${i+1}/3 — Longue — Transcris en hébreu</div>
+    <div class="arow">
+      <button class="pbtn" id="pb${i}" onclick="play('${t.t.replace(/'/g,"\\'")}',${i})">▶ Écouter</button>
+      <button class="spd ${spd===0.6?'on':''}" onclick="setSpd(0.6,this)">0.6×</button>
+      <button class="spd ${spd===0.75?'on':''}" onclick="setSpd(0.75,this)">0.75×</button>
+      <button class="spd ${spd===1?'on':''}" onclick="setSpd(1,this)">1×</button>
+    </div>
+    <textarea class="tinput hi" rows="3" id="at${i}" placeholder="כתבי כאן את מה ששמעת…"></textarea>
+    <div class="arow2">
+      <button class="btn btn-ink" onclick="chkAud(${i},'${t.t.replace(/'/g,"\\'")}')">Vérifier</button>
+      <button class="btn btn-ghost" onclick="showTr(${i},'${t.f.replace(/'/g,"\\'")}')">Traduction FR</button>
+    </div>
+    <div class="cbox" id="ab${i}"></div>
+  </div>`).join('');
+  return `<div>
+    <div class="tag">Écoute · Phrases complexes</div>
+    <h2 class="etitle">Compréhension orale</h2>
+    <p class="esub">Phrases longues — 2-3 propositions. Commence à 0.6×. Écoute plusieurs fois si nécessaire.</p>
+    ${items}
+    <div class="arow2"><button class="btn btn-gold" onclick="nxt(80)">Exercice suivant →</button></div>
+  </div>`;
+}
+function play(text,idx){
+  if(utt)speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='he-IL';u.rate=spd;
+  document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('playing'));
+  const btn=document.getElementById('pb'+idx);if(btn)btn.classList.add('playing');
+  u.onend=()=>{if(btn)btn.classList.remove('playing');};
+  utt=u;speechSynthesis.speak(u);
+}
+function setSpd(s,btn){spd=s;document.querySelectorAll('.spd').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+function chkAud(idx,cor){
+  const fb=document.getElementById('ab'+idx);fb.classList.add('show');
+  fb.innerHTML=`<div class="clb">Texte original</div><div style="font-family:'Noto Sans Hebrew';direction:rtl;text-align:right;font-size:1.15rem;line-height:2">${cor}</div>`;
+}
+function showTr(idx,fr){
+  const fb=document.getElementById('ab'+idx);fb.classList.add('show');
+  fb.innerHTML+='<div style="margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-style:italic;color:var(--muted);font-size:.86rem">'+fr+'</div>';
+}
+
+// FILL BLANKS
+function buildFill(d){
+  const D=FILLS[d];
+  const items=D.sentences.map((s,i)=>`<div class="card">
+    <div class="clbl">Phrase ${i+1} — <em>${s.f}</em></div>
+    <div class="fbsent">${s.b} <input class="blank" id="bl${i}" data-a="${s.blank}" placeholder="…"> ${s.a}</div>
+    <div style="font-size:.76rem;color:var(--muted)">💡 ${s.hint}</div>
+    <div class="cbox" id="fb${i}"></div>
+  </div>`).join('');
+  return `<div>
+    <div class="tag">Exercice · Blancs</div>
+    <h2 class="etitle">Complète en hébreu</h2>
+    <p class="esub">Écris la forme exacte. Entrée = passer à la suivante.</p>
+    ${items}
+    <div class="arow2"><button class="btn btn-red" onclick="chkFill()">Vérifier tout</button></div>
+  </div>`;
+}
+function initFill(){
+  document.querySelectorAll('.blank').forEach((inp,i,arr)=>{
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&i<arr.length-1)arr[i+1].focus();});
+  });
+}
+function chkFill(){
+  let r=0,tot=0;
+  document.querySelectorAll('.blank').forEach((inp,i)=>{
+    const a=inp.dataset.a,v=inp.value.trim();
+    const fb=document.getElementById('fb'+i);tot++;fb.classList.add('show');
+    if(v===a){
+      inp.classList.add('ok');
+      fb.innerHTML=`<span style="color:var(--ok)">✓ <strong style="font-family:'Noto Sans Hebrew';direction:rtl">${a}</strong></span>`;
+      r++;
+    } else {
+      inp.classList.add('ko');
+      fb.innerHTML=`<span style="color:var(--ko)">✗</span> Attendu : <strong style="font-family:'Noto Sans Hebrew';direction:rtl;font-size:1.05rem">${a}</strong>${v?` · Tu as écrit : <em>${v}</em>`:''}`;
+      ST.errs.push({cat:'blancs',w:v||'(vide)',r:a,e:'Forme attendue'});
+    }
+  });
+  const p=Math.round(r/tot*100);
+  document.querySelector('.ea .arow2').innerHTML=`
+    <div style="font-weight:700;color:${p>=80?'var(--ok)':'var(--ko)'}">${r}/${tot} — ${p}%</div>
+    <button class="btn btn-gold" onclick="nxt(${p})">Lecture →</button>`;
+}
+
+// READING
+function buildRead(d){
+  const R=READS[d];
+  let th='';
+  R.text.forEach(tok=>{
+    if(tok.w==='\n'){th+='<br>';return;}
+    if(tok.w==='\n\n'){th+='<br><br>';return;}
+    th+=tok.t?`<span class="rw" data-t="${tok.t.replace(/"/g,'&quot;')}">${tok.w} </span>`:tok.w+' ';
+  });
+  const qs=R.qs.map((q,i)=>`<div class="card" style="margin-bottom:12px">
+    <div class="clbl">Question ${i+1}/5</div>
+    <div style="font-weight:700;margin-bottom:10px;font-size:.93rem">${q.q}</div>
+    <textarea class="tinput hi" rows="2" placeholder="תשובתך בעברית…"></textarea>
+    <button class="btn btn-ghost" style="margin-top:8px" onclick="rvlQ(this,'${q.a.replace(/'/g,"\\'")}','${q.aFr.replace(/'/g,"\\'")}')">Révéler</button>
+    <div class="cbox" id="rq${i}"></div>
+  </div>`).join('');
+  return `<div>
+    <div class="tag">Lecture · Texte 200+ mots</div>
+    <h2 class="etitle">${R.title}</h2>
+    <p class="esub">${R.sub}</p>
+    <div class="rblock" id="rt">${th}</div>
+    <div class="note" style="margin-bottom:18px">💡 Réponds aux 5 questions SANS regarder le texte. Couvre-le.</div>
+    ${qs}
+    <div class="arow2" style="margin-top:18px"><button class="btn btn-gold" onclick="nxt(80)">Traductions →</button></div>
+  </div>`;
+}
+function initRead(){
+  const tip=document.getElementById('tip');
+  document.querySelectorAll('#rt .rw').forEach(w=>{
+    w.addEventListener('mouseenter',e=>{tip.textContent=e.target.dataset.t;tip.style.display='block';});
+    w.addEventListener('mousemove',e=>{tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY-30)+'px';});
+    w.addEventListener('mouseleave',()=>tip.style.display='none');
+    w.addEventListener('click',e=>{tip.textContent=e.target.dataset.t;tip.style.display='block';tip.style.left=(e.clientX+12)+'px';tip.style.top=(e.clientY-30)+'px';setTimeout(()=>tip.style.display='none',2000);});
+  });
+}
+function rvlQ(btn,a,fr){
+  const fb=btn.nextElementSibling;fb.classList.add('show');
+  fb.innerHTML=`<div class="clb">Réponse</div>
+    <div style="font-family:'Noto Sans Hebrew';direction:rtl;text-align:right;font-size:1.05rem;margin-bottom:5px">${a}</div>
+    ${fr?`<div style="font-style:italic;color:var(--muted);font-size:.82rem">${fr}</div>`:''}`;
+  btn.style.display='none';
+}
+
+// TRANSLATION
+function buildTrans(d){
+  const T=TRANS[d];
+  const items=T.items.map((p,i)=>{
+    const isHeb=T.dir==='heb2fr'||(T.dir==='mixed'&&i%2===1);
+    const errH=p.errs.map(e=>`<div class="erri">
+      <div style="margin-bottom:4px"><span style="font-size:.76rem;color:var(--ko)">✗</span> <span class="ew">${e.w}</span> → <span class="er">${e.r}</span></div>
+      <div style="font-size:.83rem;color:var(--ink)">${e.e}</div>
+    </div>`).join('');
+    return `<div class="card" style="margin-bottom:20px">
+      <div class="clbl">${i+1}/10 · ${isHeb?'🔵 HEB → FR':'🔴 FR → HEB'}</div>
+      <div class="tsrc ${isHeb?'rtl':''}">${p.s}</div>
+      <textarea class="tinput ${isHeb?'':'hi'}" rows="3" placeholder="${isHeb?'Ta traduction en français…':'תרגום שלך לעברית…'}"></textarea>
+      <div class="arow2">
+        <button class="btn btn-ink" onclick="rvlT(${i},'${(p.t||p.t).replace(/'/g,"\\'")}','${p.n.replace(/'/g,"\\'")}')">Révéler + analyser</button>
+      </div>
+      <div class="cbox" id="tc${i}"></div>
+      <div class="epanel" id="ep${i}">
+        <div class="ep-t">⚠️ Erreurs fréquentes — à mémoriser</div>
+        ${errH}
+      </div>
+    </div>`;
+  }).join('');
+  return `<div>
+    <div class="tag">Traduction · 10 phrases + analyse</div>
+    <h2 class="etitle">${T.title}</h2>
+    <p class="esub">Traduis d'abord SANS aide, même imparfaitement. Révèle ensuite. Lis chaque analyse d'erreur attentivement — ce sont tes vrais points faibles.</p>
+    ${items}
+    <div class="arow2" style="margin-top:22px"><button class="btn btn-gold" onclick="nxt(80)">Bilan →</button></div>
+  </div>`;
+}
+function rvlT(i,t,n){
+  const fb=document.getElementById('tc'+i),ep=document.getElementById('ep'+i);
+  fb.classList.add('show');ep.classList.add('show');
+  const isHeb=TRANS[ST.curDay].dir==='heb2fr'||(TRANS[ST.curDay].dir==='mixed'&&i%2===1);
+  fb.innerHTML=`<div class="clb">Traduction de référence</div>
+    <div style="${!isHeb?'font-family:\'Noto Sans Hebrew\';direction:rtl;text-align:right;font-size:1.05rem;':''}">${t}</div>
+    <div style="margin-top:8px;font-size:.8rem;color:var(--muted);border-top:1px solid var(--line);padding-top:7px">${n}</div>`;
+}
+
+// SUMMARY
+function buildSum(){
+  const d=ST.curDay;
+  const scores=Object.entries(ST.exSc).filter(([k])=>Number(k)<7).map(([,v])=>v);
+  const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b)/scores.length):0;
+  const min=Math.floor(ST.secs/60);
+  ST.days[d]={completed:true,score:avg,time:ST.secs,ec:ST.errs.length};
+  sv();clearInterval(ST.ti);document.getElementById('tmr').textContent='—';buildDots();
+
+  const en=['Flashcards','Grammaire','Conjugaison','Audio','Blancs','Lecture','Traduction'];
+  const bkH=en.map((n,i)=>`<div class="bki">
+    <div class="bki-l">${n}</div>
+    <div class="bki-v ${(ST.exSc[i]||0)>=80?'g':(ST.exSc[i]||0)>=60?'b':'r'}">${ST.exSc[i]||'—'}${ST.exSc[i]?'%':''}</div>
+  </div>`).join('');
+
+  const errH=ST.errs.length
+    ?ST.errs.slice(0,10).map(e=>`<div class="esi">
+        <span class="esi-tag">${e.cat}</span>
+        <div><span style="color:var(--ko);font-family:'Noto Sans Hebrew';direction:rtl">${e.w}</span> → <span style="color:var(--ok);font-family:'Noto Sans Hebrew';direction:rtl">${e.r}</span><br><span style="font-size:.81rem;color:var(--muted)">${e.e}</span></div>
+      </div>`).join('')
+    :'<em style="color:var(--muted)">Aucune erreur enregistrée dans les exercices notés.</em>';
+
+  const wH=VOC[d].map(v=>`<span class="wc">${v.h}</span>`).join('');
+
+  return `<div class="cw">
+    <div class="cring"><div class="cn">${avg}</div><div class="cs">%</div></div>
+    <h2 class="ctit">Session terminée ${avg>=80?'🎯':avg>=65?'👍':'💪'}</h2>
+    <p class="csub">Jour ${d+1} · ${min} minutes · ${ST.errs.length} erreurs notées</p>
+    <div class="bkd">${bkH}</div>
+    ${ST.errs.length?`<div class="esum"><div class="esum-t">Erreurs — à mémoriser pour demain</div>${errH}</div>`:''}
+    <div style="background:var(--white);border:1px solid var(--line);border-radius:9px;padding:18px;margin-bottom:20px">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px">Vocabulaire de la session</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">${wH}</div>
+    </div>
+    <div class="arow2" style="justify-content:center;gap:12px">
+      <button class="btn btn-ghost" onclick="gv('h')">← Programme</button>
+      <button class="btn btn-ink" onclick="gv('st')">Statistiques →</button>
+    </div>
+  </div>`;
+}
+
+// STATS
+function renderStats(){
+  const d=new Date();
+  document.getElementById('st-wk').textContent=`Semaine du ${d.toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'})}`;
+  const bc=document.getElementById('bch');bc.innerHTML='';
+  DMETA.forEach((_,i)=>{
+    const sc=ST.days[i]?.score||0;
+    const col=sc>=80?'var(--ok)':sc>=60?'var(--warn)':sc>0?'var(--ko)':'var(--line)';
+    bc.innerHTML+=`<div class="bc"><div class="bv">${sc?sc+'%':'—'}</div><div class="bf" style="height:${Math.max(3,sc*1.18)}px;background:${col}"></div><div class="bl">J${i+1}</div></div>`;
+  });
+  const wm=document.getElementById('wm'),wr=document.getElementById('wr');
+  const m=Object.entries(ST.vocab).filter(([,v])=>v.k>=2&&v.u===0);
+  const s=Object.entries(ST.vocab).filter(([,v])=>v.u>v.k);
+  wm.innerHTML=m.length?m.map(([w,v])=>`<span class="wc">${w} — ${v.f}</span>`).join(''):'<em style="color:var(--muted)">Pas encore de mots maîtrisés.</em>';
+  wr.innerHTML=s.length?s.map(([w,v])=>`<span class="wc bad">${w} — ${v.f}</span>`).join(''):'<em style="color:var(--muted)">Aucun mot particulièrement difficile !</em>';
+}
+</script>
+</body>
+</html>
